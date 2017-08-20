@@ -1,0 +1,96 @@
+<style>
+  .field_with_errors { display: inline; }
+</style>
+
+<%= form_for([@product]) do |f| %>
+  <% if @product.errors.any? %>
+    <div id="error_explanation">
+      <h2>
+        <%= pluralize(@product.errors.count, "error") %> prohibited
+        this article from being saved:
+      </h2>
+      <ul>
+        <% @product.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+
+
+  <p>
+    <%= f.label :podkategoria %><br>
+    <!-- if we have a product (so it has subcategory) -->
+    <% if @product.subcategory != nil %>
+    <%= select_tag(:category_id, options_from_collection_for_select(@categories, 'id', 'name', @product.subcategory.category_id), onchange: 'refresh_subcategories();') %>
+    <%= f.select(:subcategory_id, options_from_collection_for_select_with_data(@subcategories, 'id', 'name',  @product.subcategory_id, {'category_id' => :category_id})) %>
+    <!-- if it's a new product -->
+    <% else %>
+    <%= select_tag(:category_id, options_from_collection_for_select(@categories, 'id', 'name'), onchange: 'refresh_subcategories();') %>
+    <%= f.select(:subcategory_id, options_from_collection_for_select_with_data(@subcategories, 'id', 'name', nil, {'category_id' => :category_id})) %>
+    <% end %>
+
+
+  <%#= f.select(:subcategory_id, options_from_collection_for_select(@subcategories, 'id', 'name', @spending.subcategory_id)) %>
+  </p>
+
+
+  <p>
+    <%= f.label :opis %><br>
+    <%= f.text_area :name %>
+  </p>
+
+  <p>
+    <%= f.label :jednostka %><br>
+    <%= f.text_field :unit %>
+  </p>
+
+
+
+
+
+  <p>
+    <%= f.submit :dodaj %>
+  </p>
+
+  <!-- ddendums:
+  <ul>
+    <%= f.fields_for :tag do |t| %>
+      <li>
+        <%= t.text_field :tag_name %>
+
+
+      </li>
+    <% end %>
+  </ul> -->
+<% end %>
+<script>
+
+function refresh_subcategories(){
+  var category_id = document.getElementById('category_id').value;
+  var subcategory_options = document.getElementById('product_subcategory_id').options;
+  var already_selected = false;
+  for(i=0; i < subcategory_options.length ; i++){
+    if(subcategory_options[i].dataset.category_id == category_id){
+      subcategory_options[i].hidden=false;
+      if(!already_selected){
+        subcategory_options[i].selected = true;
+      }
+      already_selected = true;
+      selected_index = i;
+    }else{
+      subcategory_options[i].hidden=true;
+    }
+<% if @product.subcategory_id %>
+    if(<%= @product.subcategory_id %> == subcategory_options[i].value){
+      is_current_subcategory_visible = true;
+      subcategory_options[i].selected = true;
+      subcategory_options[selected_index].selected = false;
+    }
+<% end %>
+  }
+}
+refresh_subcategories();
+
+</script>

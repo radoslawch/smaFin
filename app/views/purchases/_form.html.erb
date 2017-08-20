@@ -1,0 +1,132 @@
+<style>
+  .field_with_errors { display: inline; }
+</style>
+
+<%= form_for([@purchase]) do |f| %>
+  <% if @purchase.errors.any? %>
+    <div id="error_explanation">
+      <h2>
+        <%= pluralize(@purchase.errors.count, "error") %> prohibited
+        this article from being saved:
+      </h2>
+      <ul>
+        <% @purchase.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+
+<% if @cart.nil? %>
+<!-- add product to chosen cart -->
+  <p>
+    <%= f.label :cart %><br>
+    <%= f.select(:cart_id, options_from_collection_for_select(@carts, 'id', 'name',  @purchase.cart_id)) %>
+  </p>
+<% else %>
+<!-- add product to known cart -->
+	<%= f.hidden_field :cart_id, :value => @cart.id %>
+<% end %>
+
+
+
+  <p>
+    <%= f.label :product %>
+    <!-- if we have a purchase (so it has a product) -->
+    <% if @purchase.product != nil %>
+    <%= select_tag(:category_id, options_from_collection_for_select(@categories, 'id', 'name', @purchase.product.subcategory.category_id), onchange: 'refresh_subcategories();') %>
+    <%= select_tag(:subcategory_id, options_from_collection_for_select_with_data(@subcategories, 'id', 'name',  @purchase.product.subcategory_id, {'category_id' => :category_id}), onchange: 'refresh_products();') %>
+    <%= f.select(:product_id, options_from_collection_for_select_with_data(@products, 'id', 'name',  @purchase.product, {'subcategory_id' => :subcategory_id})) %>
+    <!-- if it's a new purchase -->
+    <% else %>
+    <%= select_tag(:category_id, options_from_collection_for_select(@categories, 'id', 'name', nil), onchange: 'refresh_subcategories();') %>
+    <%= select_tag(:subcategory_id, options_from_collection_for_select_with_data(@subcategories, 'id', 'name',  nil,  {'category_id' => :category_id}), onchange: 'refresh_products();') %>
+    <%= f.select(:product_id, options_from_collection_for_select_with_data(@products, 'id', 'name',  nil, {'subcategory_id' => :subcategory_id})) %>
+    <% end %>
+
+    <%#= f.select(:product_id, options_from_collection_for_select(@products, 'id', 'name',  @purchase.product_id)) %>
+
+  </p>
+
+
+  <p>
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </p>
+
+  <p>
+    <%= f.label :price %>
+    <%= f.text_field :price %>
+  </p>
+
+  <p>
+    <%= f.label :amount %>
+    <%= f.text_field :amount %>
+  </p>
+
+  <p>
+    <%= f.submit :add %>
+  </p>
+
+ 
+<% end %>
+
+
+
+<script>
+function refresh_subcategories(){
+  var category_id = document.getElementById('category_id').value;
+  var subcategory_options = document.getElementById('subcategory_id').options;
+  var already_selected = false;
+
+  for(i=0; i < subcategory_options.length ; i++){
+    if(subcategory_options[i].dataset.category_id == category_id){
+      subcategory_options[i].hidden=false;
+      if(!already_selected){
+        subcategory_options[i].selected = true;
+        selected_index = i;
+        already_selected = true;
+      }
+    }else{
+      subcategory_options[i].hidden=true;
+    }
+<% if @purchase.product_id %>
+    if(<%= @purchase.product.subcategory_id %> == subcategory_options[i].value){
+      subcategory_options[selected_index].selected = false;``
+      subcategory_options[i].selected = true;
+    }
+<% end %>
+  }
+  refresh_products();
+}
+
+function refresh_products(){
+  var subcategory_id = document.getElementById('subcategory_id').value;
+  var product_options = document.getElementById('purchase_product_id').options;
+  var already_selected = false;
+  for(i=0; i < product_options.length ; i++){
+    if(product_options[i].dataset.subcategory_id == subcategory_id){
+      product_options[i].hidden=false;
+      if(!already_selected){
+        product_options[i].selected = true;
+      }
+      already_selected = true;
+      selected_index = i;
+    }else{
+      product_options[i].hidden=true;
+    }
+<% if @purchase.product_id %>
+    if(<%= @product.subcategory_id %> == product_options[i].value){
+      is_current_subcategory_visible = true;
+      product_options[i].selected = true;
+      product_options[selected_index].selected = false;
+    }
+<% end %>
+  }
+}
+
+
+refresh_subcategories();
+refresh_products();
+</script>

@@ -1,0 +1,33 @@
+<p>
+  <strong>name:</strong>
+  <%= @cart.name %>
+</p>
+
+<p>
+  <strong>added:</strong>
+  <%= @cart.created_at.strftime("%y-%m-%d") %>
+</p>
+
+<p>
+  <strong>bought:</strong>
+  <%= @cart.created %>
+</p>
+
+<!--
+<p>
+  <strong>changed:</strong>
+  <%= @cart.updated_at.strftime("%y-%m-%d") %>
+</p>
+<br>
+-->
+
+
+
+Add product
+<%= render 'purchases/form' %>
+In cart 
+<br>
+<%= render 'purchases/table' %>
+
+
+<%= link_to 'Back', carts_path %>

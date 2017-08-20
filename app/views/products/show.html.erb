@@ -1,0 +1,23 @@
+<p>
+  <strong>produkt:</strong>
+  <%= @product.subcategory.category.name %>
+</p>
+
+<p>
+  <strong>kategoria:</strong>
+  <%= @product.subcategory.name %>
+</p>
+
+<p>
+  <strong>opis:</strong>
+  <%= @product.name %>
+</p>
+
+<p>
+  <strong>jednostka:</strong>
+  <%= @product.unit %>
+</p>
+
+
+
+<%= link_to 'Back', products_path %>

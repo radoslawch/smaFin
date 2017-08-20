@@ -1,0 +1,45 @@
+<style>
+  .field_with_errors { display: inline; }
+</style>
+
+<%= form_for([@cart]) do |f| %>
+  <% if @cart.errors.any? %>
+    <div id="error_explanation">
+      <h2>
+        <%= pluralize(@cart.errors.count, "error") %> prohibited
+        this article from being saved:
+      </h2>
+      <ul>
+        <% @cart.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+
+  <p>
+    <%= f.label :name %><br>
+    <%= f.text_field :name %>
+  </p>
+	<p>
+    <%= f.label :created %><br>
+    <%= f.date_field :created, value: Date.today %>
+  </p>
+
+
+  <p>
+    <%= f.submit :add %>
+  </p>
+
+  <!-- ddendums:
+  <ul>
+    <%= f.fields_for :tag do |t| %>
+      <li>
+        <%= t.text_field :tag_name %>
+
+
+      </li>
+    <% end %>
+  </ul> -->
+<% end %>

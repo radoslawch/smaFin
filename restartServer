@@ -1,0 +1,1 @@
+pkill -F tmp/pids/server.pid && rails s -d

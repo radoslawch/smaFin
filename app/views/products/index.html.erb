@@ -1,0 +1,25 @@
+<%= link_to 'Nowy', new_product_path %>
+
+<table>
+  <tr>
+    <th>Kat</th>
+    <th>Podkat</th>
+    <th>Nazwa</th>
+    <th>Jednostka</th>
+  </tr>
+
+  <% @products.each do |product| %>
+    <tr>
+      <td><%= product.subcategory.category.name %></td>
+      <td><%= product.subcategory.name %></td>
+      <td><%= product.name %></td>
+      <td><%= product.unit %></td>
+
+      <td><%= link_to 'Pokaż', product_path(product) %></td>
+      <td><%= link_to 'Edit', edit_product_path(product) %></td>
+      <td><%= link_to 'Destroy', product_path(product),
+              method: :delete,
+              data: { confirm: 'Are you sure?' } %></td>
+    </tr>
+  <% end %>
+</table>

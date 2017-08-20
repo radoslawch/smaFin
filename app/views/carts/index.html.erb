@@ -1,0 +1,51 @@
+<%= link_to 'New', new_cart_path %>
+
+<table>
+  <tr>
+    <!-- <th>Id</th> -->
+    <th>Name</th>
+    <th>Created</th>
+    <!-- <th>Data zmiany</th> -->
+  </tr>
+
+  <% @carts.each do |cart| %>
+  <% if cookies[:show_hidden] == '1' || cart.hidden == false%>
+    <tr>
+
+      <!-- <td><%= cart.id %></td> -->
+      <td><%= cart.name %></td>
+      <td><%= cart.created_at.strftime("%y-%m-%d") %></td>
+      <!-- <td><%= cart.updated_at %></td> -->
+
+      <td><%= link_to 'Show', cart_path(cart) %></td>
+      <td><%= link_to 'Edit', edit_cart_path(cart) %></td>
+      
+
+	<td><%=
+	if cart.hidden 
+		link_to "Unhide", hide_cart_path(cart),
+		method: :hide
+	else
+		link_to "Hide", hide_cart_path(cart),
+		method: :hide
+	end
+	%></td>
+
+      <%	  	
+		if cart.hidden
+		%> 
+		<td>
+		<%=
+			link_to 'Destroy', cart_path(cart),
+			method: :delete,
+			data: { confirm: 'Are you sure?' } 
+			%>
+			</td>
+			<%
+		end
+		%>
+
+    </tr>
+	<% end %>
+  <% end %>
+</table>

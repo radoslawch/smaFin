@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  id: 
+  name: MyString
+  hidden: false
+  created: 2017-05-20 13:56:36
+
+two:
+  id: 
+  name: MyString
+  hidden: false
+  created: 2017-05-20 13:56:36

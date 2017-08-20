@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>smaFin</title>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'autocomplete-rails' %>
+    
+  </head>
+
+  <body>
+
+    <%= link_to 'Carts', carts_path %>
+    <%= link_to 'Subcats', subcategories_path %>
+    <%= link_to 'Cats', categories_path %>
+    <%= link_to 'Products', products_path %>
+    <%= link_to 'Purchases', purchases_path %>
+    <br/>
+
+    <%= yield %>
+	
+    <br/>    
+    <%= link_to "ToggleHidden", :toggle_hidden %>
+    <%=
+        #link_to "Store Workspace", toggle_hidden(root_path), :method => :get
+    %>
+
+
+
+  </body>
+</html>

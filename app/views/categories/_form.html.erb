@@ -1,0 +1,41 @@
+<style>
+  .field_with_errors { display: inline; }
+</style>
+
+<%= form_for([@category]) do |f| %>
+  <% if @category.errors.any? %>
+    <div id="error_explanation">
+      <h2>
+        <%= pluralize(@category.errors.count, "error") %> prohibited
+        this article from being saved:
+      </h2>
+      <ul>
+        <% @category.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+
+  <p>
+    <%= f.label :nazwa %><br>
+    <%= f.text_field :name %>
+  </p>
+
+
+  <p>
+    <%= f.submit :dodaj %>
+  </p>
+
+  <!-- ddendums:
+  <ul>
+    <%= f.fields_for :tag do |t| %>
+      <li>
+        <%= t.text_field :tag_name %>
+
+
+      </li>
+    <% end %>
+  </ul> -->
+<% end %>

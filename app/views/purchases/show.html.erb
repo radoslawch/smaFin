@@ -1,0 +1,31 @@
+<p>
+  <strong>koszyk:</strong>
+  <%= @purchase.cart.name %>
+</p>
+
+<p>
+  <strong>produkt:</strong>
+  <%= @purchase.product.name %>
+</p>
+
+<p>
+  <strong>opis:</strong>
+  <%= @purchase.name %>
+</p>
+
+<p>
+  <strong>cena:</strong>
+  <%= @purchase.price %>
+</p>
+
+<p>
+  <strong>ilość:</strong>
+  <%= @purchase.amount %>
+</p>
+<p>
+  <strong>jednostka:</strong>
+  <%= @purchase.product.unit %>
+</p>
+
+
+<%= link_to 'Back', purchases_path %>

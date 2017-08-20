@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  id: 
+  name: MyString
+  hidden: false
+  price: 1.5
+  amount: 1.5
+  subcategory: one
+  cart: one
+
+two:
+  id: 
+  name: MyString
+  hidden: false
+  price: 1.5
+  amount: 1.5
+  subcategory: two
+  cart: two
