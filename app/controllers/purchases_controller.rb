@@ -23,6 +23,9 @@ class PurchasesController < ApplicationController
     @products =  Product.all
     #@tag = @purchase.tag.build
     #render plain: params[:purchase].inspect
+
+    @categories =  Category.all
+    @subcategories =  Subcategory.all
   end
 
   def create #nowy wydatek - akcja
@@ -43,7 +46,9 @@ class PurchasesController < ApplicationController
     @products =  Product.all
 
     if @purchase.update(purchase_params)
-      redirect_to @purchase
+      #update sucessfull
+      #redirect to cart the purchase belongs to
+      redirect_to @purchase.cart
     else
       render 'edit'
     end

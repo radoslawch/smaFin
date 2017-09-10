@@ -1,1 +1,2 @@
-pkill -F tmp/pids/server.pid && rails s -d
+sudo service mysql start
+pkill -F tmp/pids/server.pid & rails s -d
