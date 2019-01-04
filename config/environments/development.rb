@@ -40,7 +40,7 @@ Rails.application.configure do
   # Debug mode disables concatenation and preprocessing of assets.
   # This option may cause significant delays in view rendering with a large
   # number of complex assets.
-  config.assets.debug = true
+  config.assets.debug = false
 
   # Suppress logger output for asset requests.
   config.assets.quiet = true
@@ -52,5 +52,10 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
-  config.web_console.whitelisted_ips = '192.168.145.1'
+  # my configs
+  config.web_console.whitelisted_ips = ['192.168.145.1', '192.168.124.101']
+  
+  config.action_controller.perform_caching             = false
+  
+  config.reload_classes_only_on_change = false
 end

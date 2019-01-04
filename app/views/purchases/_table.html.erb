@@ -1,7 +1,7 @@
 <table>
   <tr>
     <th>product</th>
-	<!-- don't show cart if we are in it's context -->
+    <!-- don"t show cart if we are in it"s context -->
     <% if @cart.nil? %><th>cart</th><% end %> 
     <th>name</th>
     <th>price</th>
@@ -10,7 +10,8 @@
   </tr>
 
   <% @purchases.each do |purchase| %>
-    <tr>
+  <% if !purchase.hidden || cookies[:show_hidden].to_i > 0 %>
+    <tr <% if purchase.hidden %>style="text-decoration: line-through;"<% end %> >
       <td><%= purchase.product.name %></td>
       <% if @cart.nil? %><td><%= purchase.cart.name %></td><% end %>
       <td><%= purchase.name %></td>
@@ -18,11 +19,27 @@
       <td><%= purchase.amount %></td>
       <td><%= purchase.product.unit %></td>
 
-      <td><%= link_to 'Show', purchase_path(purchase) %></td>
-      <td><%= link_to 'Edit', edit_purchase_path(purchase) %></td>
-      <td><%= link_to 'Destroy', purchase_path(purchase),
+      <td><%= link_to "Show", purchase_path(purchase) %></td>
+      <td><%= link_to "Edit", edit_purchase_path(purchase) %></td>
+      <td><%= link_to "Destroy", purchase_path(purchase),
               method: :delete,
-              data: { confirm: 'Are you sure?' } %></td>
+              data: { confirm: "Are you sure?" } %>
+      </td>
+      
+      <% if purchase.hidden %>
+      <td><%= link_to "Unhide", unhide_purchase_path(purchase),
+              method: :unhide,
+              data: { confirm: "Are you sure?" }
+            %>
+      </td>
+      <% else %>
+      <td><%= link_to "Hide", hide_purchase_path(purchase),
+              method: :hide,
+              data: { confirm: "Are you sure?" }
+            %>
+      </td>
+      <% end %>
     </tr>
+  <% end %>
   <% end %>
 </table>

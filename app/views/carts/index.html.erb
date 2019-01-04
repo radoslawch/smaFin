@@ -21,31 +21,31 @@
       <td><%= link_to 'Edit', edit_cart_path(cart) %></td>
       
 
-	<td><%=
-	if cart.hidden 
-		link_to "Unhide", hide_cart_path(cart),
-		method: :hide
-	else
-		link_to "Hide", hide_cart_path(cart),
-		method: :hide
-	end
-	%></td>
+    <td><%=
+    if cart.hidden 
+        link_to "Unhide", hide_cart_path(cart),
+        method: :hide
+    else
+        link_to "Hide", hide_cart_path(cart),
+        method: :hide
+    end
+    %></td>
 
-      <%	  	
-		if cart.hidden
-		%> 
-		<td>
-		<%=
-			link_to 'Destroy', cart_path(cart),
-			method: :delete,
-			data: { confirm: 'Are you sure?' } 
-			%>
-			</td>
-			<%
-		end
-		%>
+      <%          
+        if cart.hidden
+        %> 
+        <td>
+        <%=
+            link_to 'Destroy', cart_path(cart),
+            method: :delete,
+            data: { confirm: 'Are you sure?' } 
+            %>
+            </td>
+            <%
+        end
+        %>
 
     </tr>
-	<% end %>
+    <% end %>
   <% end %>
 </table>

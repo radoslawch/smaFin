@@ -1,4 +1,4 @@
-<%= link_to 'Nowy', new_product_path %>
+<%= link_to "Nowy", new_product_path %>
 
 <table>
   <tr>
@@ -9,17 +9,34 @@
   </tr>
 
   <% @products.each do |product| %>
-    <tr>
+  <% if !product.hidden || cookies[:show_hidden].to_i > 0 %>
+    <tr <% if product.hidden %>style="text-decoration: line-through;"<% end %> >
       <td><%= product.subcategory.category.name %></td>
       <td><%= product.subcategory.name %></td>
       <td><%= product.name %></td>
       <td><%= product.unit %></td>
 
-      <td><%= link_to 'Pokaż', product_path(product) %></td>
-      <td><%= link_to 'Edit', edit_product_path(product) %></td>
-      <td><%= link_to 'Destroy', product_path(product),
+      <td><%= link_to "Pokaż", product_path(product) %></td>
+      <td><%= link_to "Edit", edit_product_path(product) %></td>
+      <td><%= link_to "Destroy", product_path(product),
               method: :delete,
-              data: { confirm: 'Are you sure?' } %></td>
+              data: { confirm: "Are you sure? That will delete related purchases." }
+              %>
+      </td>
+      <% if product.hidden %>
+      <td><%= link_to "Unhide", unhide_product_path(product),
+              method: :unhide,
+              data: { confirm: "Are you sure? That will unhide related purchases." }
+            %>
+      </td>
+      <% else %>
+      <td><%= link_to "Hide", hide_product_path(product),
+              method: :hide,
+              data: { confirm: "Are you sure? That will hide related purchases." }
+            %>
+      </td>
+      <% end %>
     </tr>
+  <% end %>
   <% end %>
 </table>

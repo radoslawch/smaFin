@@ -4,30 +4,29 @@
     <title>smaFin</title>
     <%= csrf_meta_tags %>
 
-    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag 'application', 'autocomplete-rails' %>
+    <%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track": "reload" %>
+    <!-- <%= javascript_include_tag "application", "data-turbolinks-track": "reload" %> -->
+    <%= javascript_include_tag "application", "autocomplete-rails" %>
     
   </head>
 
   <body>
 
-    <%= link_to 'Carts', carts_path %>
-    <%= link_to 'Subcats', subcategories_path %>
-    <%= link_to 'Cats', categories_path %>
-    <%= link_to 'Products', products_path %>
-    <%= link_to 'Purchases', purchases_path %>
+    <%= link_to "Carts", carts_path %>
+    <%= link_to "Subcats", subcategories_path %>
+    <%= link_to "Cats", categories_path %>
+    <%= link_to "Products", products_path %>
+    <%= link_to "Purchases", purchases_path %>    
+    <%= link_to "Users", users_path %>
+    <%= link_to "Roles", roles_path %>
+    <%= link_to "Logout", :logout %>
     <br/>
-
+    <br/>
+        <p id="notice"><%= notice %></p>
     <%= yield %>
-	
+    
     <br/>    
     <%= link_to "ToggleHidden", :toggle_hidden %>
-    <%=
-        #link_to "Store Workspace", toggle_hidden(root_path), :method => :get
-    %>
-
-
-
+        
   </body>
 </html>

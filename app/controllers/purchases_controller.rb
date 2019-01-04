@@ -1,38 +1,66 @@
 class PurchasesController < ApplicationController
+  
   def index #lista wydatków
-      @purchases = Purchase.left_joins(:cart).left_joins(:product)
+    check_permission
+    @purchases = Purchase.left_joins(:cart).where("user_id =" + cookies.signed[:login_id].to_s)
   end
 
   def show
+    check_permission
     @purchase = Purchase.find(params[:id])
+    @purchase.current_user_id = cookies.signed[:login_id]
+    
+    unless @purchase
+        redirect_to  purchases_path, notice: 'error, purchase does not exist'
+    end
+    
+    # workaround for no auto-validation on this action
+    if !@purchase.valid?
+        redirect_to  purchases_path, notice: @purchase.errors.full_messages.join(', ')
+    end  
   end
 
   def new #nowy wydatek - widok
-      @purchase = Purchase.new
-      @carts =  Cart.all
-      @products =  Product.all
-      #@tag = Tag.new
-
-      @categories =  Category.all
-      @subcategories =  Subcategory.all
+    check_permission
+    @purchase = Purchase.new
+    @carts =  Cart.where("user_id =" + cookies.signed[:login_id].to_s)
+    @products = Product.left_joins(:subcategory => :category).where("user_id =" + cookies.signed[:login_id].to_s)
+        
+    @subcategories = Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
+    @categories = Category.where("user_id =" + cookies.signed[:login_id].to_s)
   end
 
   def edit
+    check_permission
     @purchase = Purchase.find(params[:id])
-    @carts =  Cart.all
-    @products =  Product.all
-    #@tag = @purchase.tag.build
-    #render plain: params[:purchase].inspect
-
-    @categories =  Category.all
-    @subcategories =  Subcategory.all
+    @purchase.current_user_id = cookies.signed[:login_id]
+    
+    @carts =  Cart.where("user_id =" + cookies.signed[:login_id].to_s)
+    @products = Product.left_joins(:subcategory => :category).where("user_id =" + cookies.signed[:login_id].to_s)
+        
+    @subcategories = Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
+    @categories = Category.where("user_id =" + cookies.signed[:login_id].to_s)
+    
+    unless @purchase
+        redirect_to  purchases_path, notice: 'error, purchase does not exist'
+    end
+    
+    # workaround for no auto-validation on this action
+    if !@purchase.valid?
+        redirect_to  purchases_path, notice: @purchase.errors.full_messages.join(', ')
+    end 
   end
 
   def create #nowy wydatek - akcja
     @purchase = Purchase.new(purchase_params)
-    @carts =  Cart.all
-    @products =  Product.all
-
+    @purchase.current_user_id = cookies.signed[:login_id]
+    
+    @carts =  Cart.where("user_id =" + cookies.signed[:login_id].to_s)
+    @products = Product.left_joins(:subcategory => :category).where("user_id =" + cookies.signed[:login_id].to_s)
+        
+    @subcategories = Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
+    @categories = Category.where("user_id =" + cookies.signed[:login_id].to_s)
+  
     if @purchase.save
       redirect_to @purchase
     else
@@ -42,9 +70,13 @@ class PurchasesController < ApplicationController
 
   def update
     @purchase = Purchase.find(params[:id])
-    @carts =  Cart.all
-    @products =  Product.all
-
+    @purchase.current_user_id = cookies.signed[:login_id]
+    
+    @carts =  Cart.where("user_id =" + cookies.signed[:login_id].to_s)
+    @products = Product.left_joins(:subcategory => :category).where("user_id =" + cookies.signed[:login_id].to_s)
+        
+    @subcategories = Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
+    @categories = Category.where("user_id =" + cookies.signed[:login_id].to_s)
     if @purchase.update(purchase_params)
       #update sucessfull
       #redirect to cart the purchase belongs to
@@ -59,6 +91,28 @@ class PurchasesController < ApplicationController
     @purchase.destroy
 
     redirect_to spendings_path
+  end
+  
+  def hide
+    check_permission
+    @purchase = Purchase.find(params[:id])
+    
+    # method from a model
+    @purchase.hide(cookies.signed[:login_id])
+
+    # redirect_to subcategories_path
+    redirect_to @purchase.cart
+  end  
+  
+  def unhide
+    check_permission
+    @purchase = Purchase.find(params[:id])
+    
+    # method from a model
+    @purchase.unhide(cookies.signed[:login_id])
+
+    # redirect_to subcategories_path
+    redirect_to @purchase.cart
   end
 
 

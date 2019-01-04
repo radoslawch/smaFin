@@ -8,17 +8,37 @@
   </tr>
 
   <% @categories.each do |category| %>
-    <tr>
+  <% if !category.hidden || cookies[:show_hidden] %>
+    <tr <% if category.hidden %>style="text-decoration: line-through;"<% end %> >
+      <td><%= category.id %></td>
       <td><%= category.name %></td>
       <!-- <td><%= category.created_at %></td> -->
       <!-- <td><%= category.updated_at %></td> -->
 
       <td><%= link_to 'Pokaż', category_path(category) %></td>
       <td><%= link_to 'Edit', edit_category_path(category) %></td>
-      <td><%= link_to 'Destroy', category_path(category),
+      <td><%= link_to "Destroy", category_path(category),
               method: :delete,
-              data: { confirm: 'Are you sure?' } %></td>
+              data: { confirm: "Are you sure? That will delete related subcategories, products and purchases too." }
+            %>
+      </td>
+      <% if category.hidden %>
+      <td><%= link_to "Unhide", unhide_category_path(category),
+              method: :unhide,
+              data: { confirm: "Are you sure? That will unhide related subcategories, products and purchases too." }
+            %>
+      </td>
+      <% else %>
+      <td><%= link_to "Hide", hide_category_path(category),
+              method: :hide,
+              data: { confirm: "Are you sure? That will hide related subcategories, products and purchases too." }
+            %>
+      </td>
+      <td><%= category.user_id %>
+      </td>
+      <% end %>
     </tr>
+  <% end %>
   <% end %>
 
 </table>

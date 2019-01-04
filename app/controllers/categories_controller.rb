@@ -1,38 +1,62 @@
 class CategoriesController < ApplicationController
-  
-  def index
-      @categories = Category.all
+  def index  
+    check_permission
+    # get categories for logged user
+    @categories = Category.where("user_id =" + cookies.signed[:login_id].to_s)
   end
 
   def show
+    check_permission
     @category = Category.find(params[:id])
+    @category.current_user_id = cookies.signed[:login_id]
+    
+    unless @category
+        redirect_to  subcategories_path, notice: 'error, category does not exist'
+    end
+    
+    # workaround for no auto-validation on this action
+    if !@category.valid?
+        redirect_to  categories_path, notice: @category.errors.full_messages.join(', ')
+    end       
   end
 
   def new
-      @category = Category.new
+    check_permission
+    @category = Category.new
   end
 
   def edit
+    check_permission
     @category = Category.find(params[:id])
+    @category.current_user_id = cookies.signed[:login_id]
+    
+    unless @category
+        redirect_to  subcategories_path, notice: 'error, category does not exist'
+    end
+    
+    # workaround for no auto-validation on this action
+    if !@category.valid?
+        redirect_to  categories_path, notice: @category.errors.full_messages.join(', ')
+    end
   end
 
   def create
+    check_permission
     @category = Category.new(category_params)
-
+    @category.current_user_id = cookies.signed[:login_id]
 
     if @category.save
       @subcategory = Subcategory.new(subcategory_params)
-      @subcategory.save
-      raise Exception.new('something bad happened!')
-
-      #redirect_to @category
+      @subcategory.current_user_id = cookies.signed[:login_id]
+      @subcategory.save!
+      redirect_to @category
     else
-        raise Exception.new('something bad happened!')
       render 'new'
     end
   end
 
   def update
+    check_permission
     @category = Category.find(params[:id])
 
     if @category.update(category_params)
@@ -43,16 +67,52 @@ class CategoriesController < ApplicationController
   end
 
   def destroy
+    check_permission
     @category = Category.find(params[:id])
+    @subcategories = Subcategory.where("category_id = " + @category.id.to_s)
+    
+    for subcategory in @subcategories do
+      subcategory.destroy
+    end
+    
     @category.destroy
 
     redirect_to categories_path
   end
 
+  def hide
+    check_permission
+    @category = Category.find(params[:id])
+    @category.current_user_id = cookies.signed[:login_id]
+    @subcategories = Subcategory.where("category_id = " + @category.id.to_s)
+    for subcategory in @subcategories do
+      subcategory.hide(@category.current_user_id)
+    end
+    @category.hidden = true
+    @category.save!
 
+    redirect_to categories_path
+  end  
+  
+  def unhide
+    check_permission
+    @category = Category.find(params[:id])
+    @category.current_user_id = cookies.signed[:login_id]
+    @subcategories = Subcategory.where("category_id = " + @category.id.to_s)
+    for subcategory in @subcategories do
+      subcategory.unhide(@category.current_user_id)
+    end
+    @category.hidden = false
+    @category.save!
+
+    redirect_to categories_path
+  end 
+  
+  
   private
   def category_params
-    params.require(:category).permit(:category, :name)
+    params[:category][:user_id] = cookies.signed[:login_id]
+    params.require(:category).permit(:category, :name, :user_id)
   end
 
   def subcategory_params
