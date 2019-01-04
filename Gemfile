@@ -52,3 +52,20 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 #now for the autocompleter
 gem 'jquery-ui-rails'
 gem 'rails4-autocomplete'
+
+# update gems according to gitgub suggestion
+gem "sprockets", ">= 3.7.2"
+gem "nokogiri", ">= 1.8.2"
+gem "ffi", ">= 1.9.24"
+gem "activejob", ">= 5.0.7.1"
+gem "rack", ">= 2.0.6"
+gem "rails-html-sanitizer", ">= 1.0.4"
+gem "loofah", ">= 2.2.3"
+
+
+
+
+
+
+
+
