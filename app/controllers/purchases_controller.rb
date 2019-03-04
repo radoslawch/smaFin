@@ -16,7 +16,7 @@ class PurchasesController < ApplicationController
     
     # workaround for no auto-validation on this action
     if !@purchase.valid?
-        redirect_to  purchases_path, notice: @purchase.errors.full_messages.join(', ')
+        redirect_to purchases_path, notice: @purchase.errors.full_messages.join(', ')
     end  
   end
 

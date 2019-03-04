@@ -17,7 +17,7 @@ class Purchase < ApplicationRecord
   belongs_to :cart  
   
   validates_uniqueness_of :name, scope: :cart_id
-  validates :name, length: { in: 1..24 }  
+  validates :name, length: { in: 1..255 }  
   validates :price, length: { in: 1..24 }  
   validates :amount, length: { in: 1..24 }  
   validates :product_id, length: { minimum: 1 }

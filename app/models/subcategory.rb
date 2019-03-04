@@ -14,7 +14,7 @@ class Subcategory < ApplicationRecord
   has_many :products
   
   validates_uniqueness_of :name, scope: :category_id
-  validates :name, length: { in: 1..24 }
+  validates :name, length: { in: 1..255 }
   validates :category_id, length: { minimum: 1 }
   validates_presence_of :category_id
   validates_with SubcategoryValidator

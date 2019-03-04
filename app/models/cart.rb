@@ -14,7 +14,7 @@ class Cart < ApplicationRecord
   has_many :purchases
   
   validates_uniqueness_of :name, scope: :user_id
-  validates :name, length: { in: 1..24 }
+  validates :name, length: { in: 1..255 }
   validates :user_id, length: { minimum: 1 }
   validates_presence_of :user_id
   validates_with CartValidator
