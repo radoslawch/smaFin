@@ -37,33 +37,19 @@
 
 
   <p>
-    <%= f.label :opis %><br>
+    <%= f.label :product_name %><br>
     <%= f.text_area :name %>
   </p>
 
   <p>
-    <%= f.label :jednostka %><br>
+    <%= f.label :unit %><br>
     <%= f.text_field :unit %>
   </p>
 
-
-
-
-
   <p>
-    <%= f.submit :dodaj %>
+    <%= f.submit :add %>
   </p>
 
-  <!-- ddendums:
-  <ul>
-    <%= f.fields_for :tag do |t| %>
-      <li>
-        <%= t.text_field :tag_name %>
-
-
-      </li>
-    <% end %>
-  </ul> -->
 <% end %>
 <script>
 

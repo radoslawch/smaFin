@@ -1,11 +1,13 @@
-<%= link_to "Nowy", new_product_path %>
+<h2>List of the products</h2>
+
+<%= link_to "New product", new_product_path %>
 
 <table>
   <tr>
-    <th>Kat</th>
-    <th>Podkat</th>
-    <th>Nazwa</th>
-    <th>Jednostka</th>
+    <th>Category name</th>
+    <th>Subcategory name</th>
+    <th>Product name</th>
+    <th>Unit</th>
   </tr>
 
   <% @products.each do |product| %>
@@ -16,13 +18,8 @@
       <td><%= product.name %></td>
       <td><%= product.unit %></td>
 
-      <td><%= link_to "Pokaż", product_path(product) %></td>
+      <td><%= link_to "Show", product_path(product) %></td>
       <td><%= link_to "Edit", edit_product_path(product) %></td>
-      <td><%= link_to "Destroy", product_path(product),
-              method: :delete,
-              data: { confirm: "Are you sure? That will delete related purchases." }
-              %>
-      </td>
       <% if product.hidden %>
       <td><%= link_to "Unhide", unhide_product_path(product),
               method: :unhide,
@@ -36,6 +33,11 @@
             %>
       </td>
       <% end %>
+      <td><%= link_to "Destroy", product_path(product),
+              method: :delete,
+              data: { confirm: "Are you sure? That will delete related purchases." }
+              %>
+      </td>
     </tr>
   <% end %>
   <% end %>

@@ -85,7 +85,7 @@ class ProductsController < ApplicationController
     
     @purchases = Purchase.where("product_id = " + @product.id.to_s)
     
-    if purchases.length > 0 then
+    if @purchases.length > 0 then
       for purchase in @purchases do
         purchase.destroy
       end

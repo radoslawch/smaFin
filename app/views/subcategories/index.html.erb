@@ -1,27 +1,23 @@
-<%= link_to "Nowy", new_subcategory_path %>
+<h2>List of the subcategories</h2>
+
+<%= link_to "New subcategory", new_subcategory_path %>
 
 
   
 <table>
   <tr>
-    <th>Nazwa</th>
-    <th>KategoriaNazwa</th>
+    <th>Subcategory name</th>
+    <th>Category name</th>
   </tr>
 
   <% @subcategories.each do |subcategory| %>
   <% if !subcategory.hidden || cookies[:show_hidden].to_i > 0 %>
     <tr <% if subcategory.hidden %>style="text-decoration: line-through;"<% end %> >
-      <td><%= subcategory.id %></td>
       <td><%= subcategory.name %></td>
       <td><%= subcategory.category.name %></td>
 
-      <td><%= link_to "Pokaż", subcategory_path(subcategory) %></td>
+      <td><%= link_to "Show", subcategory_path(subcategory) %></td>
       <td><%= link_to "Edit", edit_subcategory_path(subcategory) %></td>
-      <td><%= link_to "Destroy", subcategory_path(subcategory),
-              method: :delete,
-              data: { confirm: "Are you sure? That will delete related products and purchases too." }
-            %>
-      </td>
       <% if subcategory.hidden %>
       <td><%= link_to "Unhide", unhide_subcategory_path(subcategory),
               method: :unhide,
@@ -35,6 +31,11 @@
             %>
       </td>
       <% end %>
+      <td><%= link_to "Destroy", subcategory_path(subcategory),
+              method: :delete,
+              data: { confirm: "Are you sure? That will delete related products and purchases too." }
+            %>
+      </td>
     </tr>
   <% end %>
   <% end %>

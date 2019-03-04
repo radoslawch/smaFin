@@ -1,9 +1,9 @@
 <table>
   <tr>
-    <th>product</th>
-    <!-- don"t show cart if we are in it"s context -->
-    <% if @cart.nil? %><th>cart</th><% end %> 
-    <th>name</th>
+    <th>product name</th>
+    <!-- don't show cart if we are in it's context -->
+    <% if @cart.nil? %><th>cart name</th><% end %> 
+    <th>purchase name</th>
     <th>price</th>
     <th>amount</th>
     <th>unit</th>
@@ -21,10 +21,6 @@
 
       <td><%= link_to "Show", purchase_path(purchase) %></td>
       <td><%= link_to "Edit", edit_purchase_path(purchase) %></td>
-      <td><%= link_to "Destroy", purchase_path(purchase),
-              method: :delete,
-              data: { confirm: "Are you sure?" } %>
-      </td>
       
       <% if purchase.hidden %>
       <td><%= link_to "Unhide", unhide_purchase_path(purchase),
@@ -39,6 +35,10 @@
             %>
       </td>
       <% end %>
+      <td><%= link_to "Destroy", purchase_path(purchase),
+              method: :delete,
+              data: { confirm: "Are you sure?" } %>
+      </td>
     </tr>
   <% end %>
   <% end %>

@@ -18,38 +18,19 @@
 
 
   <p>
-    <%= f.label :nazwa %><br>
+    <%= f.label :subcategory_name %><br>
     <%= f.text_field :name %>
   </p>
 
   <p>
-    <%= f.label :kategoria %><br>
+    <%= f.label :category_name %><br>
     <!-- <%= f.text_field :category_id %> -->
     <%= f.select(:category_id, options_from_collection_for_select(@categories, 'id', 'name', @subcategory.category_id || "")) %>
   </p>
 
-
-
-
-
-  <!-- <% @categories.each do |c| %>
-    <tr>
-      <td><%= c.id %></td>
-      <td><%= c.name %></td>
-    </tr>
-  <% end %> -->
   <p>
-    <%= f.submit :dodaj %>
+    <%= f.submit :add %>
   </p>
 
-  <!-- ddendums:
-  <ul>
-    <%= f.fields_for :tag do |t| %>
-      <li>
-        <%= t.text_field :tag_name %>
 
-
-      </li>
-    <% end %>
-  </ul> -->
 <% end %>

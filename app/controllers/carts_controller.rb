@@ -60,10 +60,18 @@ class CartsController < ApplicationController
     end
   end
 
-# destroy a cart
+  
   def destroy
     check_permission
     @cart = Cart.find(params[:id])
+    
+    @purchases = Purchase.where("cart_id = " + @cart.id.to_s)
+    
+    if @purchases.length > 0 then
+      for purchase in @purchases do
+        purchase.destroy
+      end
+    end
     @cart.destroy
 
     redirect_to carts_path
@@ -72,19 +80,23 @@ class CartsController < ApplicationController
 # hide a cart (mark as hidden)
   def hide
     check_permission
-    logger.info "Processing the request..."
     @cart = Cart.find(params[:id])
-    logger.info 'cart'
-    logger.info @cart
-    logger.info '@cart.hidden ='
-    logger.info @cart.hidden
-    logger.info '!@cart.hidden ='
-    logger.info @cart.hidden
-    @cart.hidden = !@cart.hidden
-    @cart.save!
+    
+    # method from a model
+    @cart.hide(cookies.signed[:login_id])
 
     redirect_to carts_path
-  end
+  end    
+  
+  def unhide
+    check_permission
+    @cart = Cart.find(params[:id])
+    
+    # method from a model
+    @cart.unhide(cookies.signed[:login_id])
+
+    redirect_to carts_path
+  end  
 
 
   private    

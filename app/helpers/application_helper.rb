@@ -1,5 +1,5 @@
 module ApplicationHelper
-	# https://thehungrycoder.com/ruby-on-rails/rails-options_from_collection_for_select-with-custom-attributes-for-each-option.html
+  # https://thehungrycoder.com/ruby-on-rails/rails-options_from_collection_for_select-with-custom-attributes-for-each-option.html
   def options_from_collection_for_select_with_data(collection, value_method, text_method, selected = nil, data = {})
     options = collection.map do |element|
       [element.send(text_method), element.send(value_method), data.map do |k, v|

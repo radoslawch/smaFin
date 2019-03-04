@@ -10,15 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180301195935) do
+ActiveRecord::Schema.define(version: 20190304215235) do
 
   create_table "carts", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.string   "name"
-    t.boolean  "hidden",     default: false
-    t.datetime "created"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.boolean  "hidden",        default: false
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
     t.integer  "user_id"
+    t.datetime "creation_date", default: '2000-01-01 00:00:00', null: false
     t.index ["user_id"], name: "index_carts_on_user_id", using: :btree
   end
 

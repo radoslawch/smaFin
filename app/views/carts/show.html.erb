@@ -1,3 +1,5 @@
+<h2>Cart details</h2>
+
 <p>
   <strong>name:</strong>
   <%= @cart.name %>
@@ -5,27 +7,15 @@
 
 <p>
   <strong>added:</strong>
-  <%= @cart.created_at.strftime("%y-%m-%d") %>
+  <%= @cart.creation_date.strftime("%Y-%m-%d") %>
 </p>
 
-<p>
-  <strong>bought:</strong>
-  <%= @cart.created %>
-</p>
-
-<!--
-<p>
-  <strong>changed:</strong>
-  <%= @cart.updated_at.strftime("%y-%m-%d") %>
-</p>
-<br>
--->
 
 
 
-Add product
+Add a product to the cart
 <%= render 'purchases/form' %>
-In cart 
+Currently in the cart 
 <br>
 <%= render 'purchases/table' %>
 
