@@ -26,6 +26,11 @@ class ProductsController < ApplicationController
     @product = Product.new
     @categories =  Category.where("user_id =" + cookies.signed[:login_id].to_s)
     @subcategories =  Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
+    if @categories.length == 0 then
+        redirect_to products_path, notice: "Add a category first!"
+    elsif @subcategories.length == 0 then
+        redirect_to products_path, notice: "Add a subcategory first!"
+    end
   end
 
   def edit

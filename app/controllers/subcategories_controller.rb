@@ -16,7 +16,7 @@ class SubcategoriesController < ApplicationController
     
     # workaround for no auto-validation on this action
     if !@subcategory.valid?
-        redirect_to  subcategories_path, notice: @subcategory.errors.full_messages.join(', ')
+        redirect_to subcategories_path, notice: @subcategory.errors.full_messages.join(', ')
     end
         
   end
@@ -24,7 +24,10 @@ class SubcategoriesController < ApplicationController
   def new
     check_permission
     @subcategory = Subcategory.new
-    @categories =  Category.where("user_id =" + cookies.signed[:login_id].to_s)
+    @categories = Category.where("user_id =" + cookies.signed[:login_id].to_s)
+    if @categories.length == 0 then
+        redirect_to subcategories_path, notice: "Add a category first!"
+    end
   end
 
   def edit
@@ -33,20 +36,20 @@ class SubcategoriesController < ApplicationController
     @subcategory = Subcategory.left_joins(:category).find(params[:id])
     @subcategory.current_user_id = cookies.signed[:login_id]
     
-    @categories =  Category.where("user_id =" + cookies.signed[:login_id].to_s)
+    @categories = Category.where("user_id =" + cookies.signed[:login_id].to_s)
     
     if !@subcategory
-        redirect_to  subcategories_path, notice: 'subcategory not found'
+        redirect_to subcategories_path, notice: 'subcategory not found'
     end  
     
     # workaround for no auto-validation on this action
     if !@subcategory.valid?
-        redirect_to  subcategories_path, notice: @subcategory.errors.full_messages.join(', ')
+        redirect_to subcategories_path, notice: @subcategory.errors.full_messages.join(', ')
     end
     
   end
 
-  # add auto-creation of product? nah
+  # add auto-creation of a product? nah
   def create
     check_permission
     @subcategory = Subcategory.new(subcategory_params)

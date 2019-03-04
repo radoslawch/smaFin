@@ -28,6 +28,16 @@ class PurchasesController < ApplicationController
         
     @subcategories = Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
     @categories = Category.where("user_id =" + cookies.signed[:login_id].to_s)
+    
+    if @carts.length == 0 then
+        redirect_to purchases_path, notice: "Add a cart first!"
+    elsif @categories.length == 0 then
+        redirect_to purchases_path, notice: "Add a category first!"
+    elsif @subcategories.length == 0 then
+        redirect_to purchases_path, notice: "Add a subcategory first!"
+    elsif @products.length == 0 then
+        redirect_to purchases_path, notice: "Add a product first!"
+    end
   end
 
   def edit
