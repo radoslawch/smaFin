@@ -25,15 +25,15 @@ class CartsController < ApplicationController
     @subcategories =  Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
     @categories =  Category.where("user_id =" + cookies.signed[:login_id].to_s)
     
-    @cant_add_purchase = ""
+    @cant_add_purchase_reason = ""
     if @categories.length == 0 then
-      @cant_add_purchase = @cant_add_purchase + "Add a category first! "
+      @cant_add_purchase_reason = @cant_add_purchase_reason + "Add a category first! "
     end
     if @subcategories.length == 0 then
-      @cant_add_purchase = @cant_add_purchase + "Add a subcategory first! "
+      @cant_add_purchase_reason = @cant_add_purchase_reason + "Add a subcategory first! "
     end
     if @products.length == 0 then
-      @cant_add_purchase = @cant_add_purchase + "Add a product first! "
+      @cant_add_purchase_reason = @cant_add_purchase_reason + "Add a product first! "
     end
     
     @cart.current_user_id = cookies.signed[:login_id]
