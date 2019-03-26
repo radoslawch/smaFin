@@ -1,8 +1,8 @@
 class CartValidator < ActiveModel::Validator
   def validate(record)
-    # check if subcategory is in category that belongs to current user
+    # check if cart belongs to current user
     if (record.user_id != record.current_user_id) then
-      record.errors[:category] << " must belong to current user"
+      record.errors[:cart] << " must belong to current user"
     end
   end
 end

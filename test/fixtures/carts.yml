@@ -1,13 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  id: 
+  id: 1
   name: MyString
   hidden: false
-  created: 2017-05-20 13:56:36
+  creation_date: 2017-05-20 13:56:36
 
 two:
-  id: 
+  id: 2
   name: MyString
   hidden: false
-  created: 2017-05-20 13:56:36
+  creation_date: 2017-05-20 13:56:36

@@ -6,7 +6,28 @@
 #   movies = Movie.create({ name: 'Star Wars' }, { name: 'Lord of the Rings' })
 #   Character.create(name: 'Luke', movie: movies.first)
 
+test_user = User.find_or_create_by(
+  {
+  name: "test_user",
+  password: "test_user"
+  }
+)
 
+admin = User.find_or_create_by(
+  {
+  name: "admin",
+  password: "admin"
+  }
+)
+
+role = Role.find_or_create_by(
+  {
+    name: "*",
+    user_id: admin.id
+  }
+)
+
+=begin
 category = Category.find_or_create_by(
     {
         name: "jedzenie"
@@ -640,3 +661,4 @@ categories.each do |category|
         )
     end
 end
+=end

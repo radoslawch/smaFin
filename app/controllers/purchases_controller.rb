@@ -1,12 +1,17 @@
 class PurchasesController < ApplicationController
   
   def index #lista wydatków
-    check_permission
+    if !check_permission then return end
     @purchases = Purchase.left_joins(:cart).where("user_id =" + cookies.signed[:login_id].to_s)
   end
 
   def show
-    check_permission
+    if !check_permission then return end
+    # workaround for no auto-validation on this action
+    if !@purchase.valid?
+        redirect_to purchases_path, notice: @purchase.errors.full_messages.join(', ')
+    end
+    
     @purchase = Purchase.find(params[:id])
     @purchase.current_user_id = cookies.signed[:login_id]
     
@@ -14,14 +19,11 @@ class PurchasesController < ApplicationController
         redirect_to  purchases_path, notice: 'error, purchase does not exist'
     end
     
-    # workaround for no auto-validation on this action
-    if !@purchase.valid?
-        redirect_to purchases_path, notice: @purchase.errors.full_messages.join(', ')
-    end  
+  
   end
 
   def new #nowy wydatek - widok
-    check_permission
+    if !check_permission then return end
     @purchase = Purchase.new
     @carts =  Cart.where("user_id =" + cookies.signed[:login_id].to_s)
     @products = Product.left_joins(:subcategory => :category).where("user_id =" + cookies.signed[:login_id].to_s)
@@ -29,19 +31,26 @@ class PurchasesController < ApplicationController
     @subcategories = Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
     @categories = Category.where("user_id =" + cookies.signed[:login_id].to_s)
     
+    notice_string = ""
     if @carts.length == 0 then
-        redirect_to purchases_path, notice: "Add a cart first!"
-    elsif @categories.length == 0 then
-        redirect_to purchases_path, notice: "Add a category first!"
-    elsif @subcategories.length == 0 then
-        redirect_to purchases_path, notice: "Add a subcategory first!"
-    elsif @products.length == 0 then
-        redirect_to purchases_path, notice: "Add a product first!"
+      notice_string += "Add a cart first! "
+    end
+    if @categories.length == 0 then
+      notice_string += "Add a category first! "
+    end
+    if @subcategories.length == 0 then
+      notice_string += "Add a subcategory first! "
+    end
+    if @products.length == 0 then
+      notice_string += "Add a product first! "
+    end
+    if notice_string != "" then
+      redirect_to purchases_path, notice: notice_string
     end
   end
 
   def edit
-    check_permission
+    if !check_permission then return end
     @purchase = Purchase.find(params[:id])
     @purchase.current_user_id = cookies.signed[:login_id]
     
@@ -62,6 +71,7 @@ class PurchasesController < ApplicationController
   end
 
   def create #nowy wydatek - akcja
+    if !check_permission then return end
     @purchase = Purchase.new(purchase_params)
     @purchase.current_user_id = cookies.signed[:login_id]
     
@@ -79,6 +89,7 @@ class PurchasesController < ApplicationController
   end
 
   def update
+    if !check_permission then return end
     @purchase = Purchase.find(params[:id])
     @purchase.current_user_id = cookies.signed[:login_id]
     
@@ -97,6 +108,7 @@ class PurchasesController < ApplicationController
   end
 
   def destroy
+    if !check_permission then return end
     @purchase = Purchase.find(params[:id])
     @purchase.destroy
 
@@ -104,7 +116,7 @@ class PurchasesController < ApplicationController
   end
   
   def hide
-    check_permission
+    if !check_permission then return end
     @purchase = Purchase.find(params[:id])
     
     # method from a model
@@ -115,7 +127,7 @@ class PurchasesController < ApplicationController
   end  
   
   def unhide
-    check_permission
+    if !check_permission then return end
     @purchase = Purchase.find(params[:id])
     
     # method from a model

@@ -1,6 +1,10 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
+  def index
+    if !check_permission then return end
+  end
+  
   def toggle_hidden
   # toggle "show_hidden" value in cookies
     if cookies[:show_hidden] == "0"
@@ -47,7 +51,7 @@ class ApplicationController < ActionController::Base
         true
     else
   # redirect to login path if not
-        redirect_to login_index_path, notice: 'please log in' 
+        redirect_to login_index_path, notice: (notice || "") + 'please log in' 
         return
     end
   end
@@ -65,18 +69,22 @@ class ApplicationController < ActionController::Base
         logger.error sql_query
         roles = Role.where(sql_query)
     end
+    
     if (roles && roles.length < 1) then
-        redirect_to :back, notice: 'no permissions, sorry' 
-    end
-  end
 
-  # remove login data
-  def clear_login
-    cookies.signed[:login_user] = "-1"
-    cookies.signed[:login_id] = "-1"
-    if request.env["REQUEST_URI"] == "/application/logout"
-      redirect_to root_path
-    else
+      if !request.env["HTTP_REFERER"].nil? then
+        # avoid redirection loop
+        if request.env["HTTP_REFERER"] != cookies.signed[:last_HTTP_REFERER] then
+          cookies.signed[:last_HTTP_REFERER] = request.env["HTTP_REFERER"]
+          redirect_to :back, notice: 'no permissions, sorry'
+        else
+          redirect_to logout_path, notice: 'account has no permissions, '
+        end
+      else
+        redirect_to application_index_path, notice: 'no permissions, sorry'
+      end 
+      return false
     end
-  end
+  return true 
+  end 
 end

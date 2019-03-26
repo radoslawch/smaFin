@@ -1,12 +1,12 @@
 class SubcategoriesController < ApplicationController
 
   def index
-    check_permission
+    if !check_permission then return end
     @subcategories = Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
   end
 
   def show
-    check_permission
+    if !check_permission then return end
     @subcategory = Subcategory.left_joins(:category).find(params[:id])
     @subcategory.current_user_id = cookies.signed[:login_id]
     
@@ -22,7 +22,7 @@ class SubcategoriesController < ApplicationController
   end
 
   def new
-    check_permission
+    if !check_permission then return end
     @subcategory = Subcategory.new
     @categories = Category.where("user_id =" + cookies.signed[:login_id].to_s)
     if @categories.length == 0 then
@@ -31,7 +31,7 @@ class SubcategoriesController < ApplicationController
   end
 
   def edit
-    check_permission
+    if !check_permission then return end
     # left join category to show current category name
     @subcategory = Subcategory.left_joins(:category).find(params[:id])
     @subcategory.current_user_id = cookies.signed[:login_id]
@@ -51,7 +51,7 @@ class SubcategoriesController < ApplicationController
 
   # add auto-creation of a product? nah
   def create
-    check_permission
+    if !check_permission then return end
     @subcategory = Subcategory.new(subcategory_params)
     @subcategory.current_user_id = cookies.signed[:login_id]
     
@@ -65,7 +65,7 @@ class SubcategoriesController < ApplicationController
   end
 
   def update
-    check_permission
+    if !check_permission then return end
     @subcategory = Subcategory.find(params[:id])
     @subcategory.current_user_id = cookies.signed[:login_id]
     
@@ -79,7 +79,7 @@ class SubcategoriesController < ApplicationController
   end
 
   def destroy
-    check_permission
+    if !check_permission then return end
     @subcategory = Subcategory.find(params[:id])
     @products = Product.where("subcategory_id = " + @subcategory.id.to_s)
     
@@ -94,7 +94,7 @@ class SubcategoriesController < ApplicationController
   end
   
   def hide
-    check_permission
+    if !check_permission then return end
     @subcategory = Subcategory.find(params[:id])
     
     # method from a model
@@ -104,7 +104,7 @@ class SubcategoriesController < ApplicationController
   end  
   
   def unhide
-    check_permission
+    if !check_permission then return end
     @subcategory = Subcategory.find(params[:id])
     
     # method from a model

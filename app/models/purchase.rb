@@ -1,10 +1,15 @@
 class PurchaseValidator < ActiveModel::Validator
   def validate(record)
     # check if purchase is a product that is in a subcategory that is in category that belongs to current user
-    if (record.product.subcategory.category.user_id != record.current_user_id) then
+    if record.product.nil? then
+      record.errors[:product] << " must be chosen"
+    elsif (record.product.subcategory.category.user_id != record.current_user_id) then
       record.errors[:category] << " of subcategory of product must belong to current user"
-    end    
-    if (record.cart.user_id != record.current_user_id) then
+    end
+    
+    if record.cart.nil? then  
+      record.errors[:cart] << " must be chosen"
+    elsif (record.cart.user_id != record.current_user_id) then
       record.errors[:cart] << " must belong to current user"
     end
   end

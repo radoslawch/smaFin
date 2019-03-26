@@ -4,33 +4,33 @@ class RolesController < ApplicationController
   # GET /roles
   # GET /roles.json
   def index
-    check_permission
-    @roles = Role.left_joins(:user)    
+    if !check_permission then return end
+    @roles = Role.left_joins(:user)
   end
 
   # GET /roles/1
   # GET /roles/1.json
   def show
-    check_permission
+    if !check_permission then return end
   end
 
   # GET /roles/new
   def new
-    check_permission
+    if !check_permission then return end
     @role = Role.new
-        @users = User.all
+    @users = User.all
   end
 
   # GET /roles/1/edit
   def edit
-    check_permission
+    if !check_permission then return end
     @users = User.all
   end
 
   # POST /roles
   # POST /roles.json
   def create
-    check_permission
+    if !check_permission then return end
     @role = Role.new(role_params)
 
     respond_to do |format|
@@ -47,7 +47,7 @@ class RolesController < ApplicationController
   # PATCH/PUT /roles/1
   # PATCH/PUT /roles/1.json
   def update
-    check_permission
+    if !check_permission then return end
     respond_to do |format|
       if @role.update(role_params)
         format.html { redirect_to @role, notice: 'Role was successfully updated.' }
@@ -62,7 +62,7 @@ class RolesController < ApplicationController
   # DELETE /roles/1
   # DELETE /roles/1.json
   def destroy
-    check_permission
+    if !check_permission then return end
     @role.destroy
     respond_to do |format|
       format.html { redirect_to roles_url, notice: 'Role was successfully destroyed.' }

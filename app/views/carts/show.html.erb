@@ -13,8 +13,14 @@
 
 
 
-Add a product to the cart
+Add a product to the cart<br>
+<% if @cant_add_purchase == "" %>
 <%= render 'purchases/form' %>
+<% else %>
+<%= @cant_add_purchase %>
+<% end %>
+<br>
+
 Currently in the cart 
 <br>
 <%= render 'purchases/table' %>

@@ -1,12 +1,12 @@
 class ProductsController < ApplicationController
   
   def index #lista produktow
-    check_permission
+    if !check_permission then return end
     @products = Product.left_joins(:subcategory => :category).where("user_id =" + cookies.signed[:login_id].to_s)
   end
 
   def show
-    check_permission
+    if !check_permission then return end
     @product = Product.find(params[:id])
     @product.current_user_id = cookies.signed[:login_id]
     
@@ -22,7 +22,7 @@ class ProductsController < ApplicationController
   end
 
   def new #nowy wydatek - widok
-    check_permission
+    if !check_permission then return end
     @product = Product.new
     @categories =  Category.where("user_id =" + cookies.signed[:login_id].to_s)
     @subcategories =  Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
@@ -34,7 +34,7 @@ class ProductsController < ApplicationController
   end
 
   def edit
-    check_permission
+    if !check_permission then return end
     # left join subcategory to show current subcategory name
     @product = Product.left_joins(:subcategory).find(params[:id])
     @product.current_user_id = cookies.signed[:login_id]
@@ -55,7 +55,7 @@ class ProductsController < ApplicationController
   end
 
   def create #nowy wydatek - akcja
-    check_permission
+    if !check_permission then return end
     @product = Product.new(product_params)
     @product.current_user_id = cookies.signed[:login_id]
     
@@ -70,7 +70,7 @@ class ProductsController < ApplicationController
   end
 
   def update
-    check_permission
+    if !check_permission then return end
     @product = Product.find(params[:id])
     @product.current_user_id = cookies.signed[:login_id]
     
@@ -85,7 +85,7 @@ class ProductsController < ApplicationController
   end
 
   def destroy
-    check_permission
+    if !check_permission then return end
     @product = Product.find(params[:id])
     
     @purchases = Purchase.where("product_id = " + @product.id.to_s)
@@ -101,7 +101,7 @@ class ProductsController < ApplicationController
   end
 
   def hide
-    check_permission
+    if !check_permission then return end
     @product = Product.find(params[:id])
 
     # method from a model
@@ -111,7 +111,7 @@ class ProductsController < ApplicationController
   end  
   
   def unhide
-    check_permission
+    if !check_permission then return end
     @product = Product.find(params[:id])
 
     # method from a model

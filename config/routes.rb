@@ -35,16 +35,18 @@ Rails.application.routes.draw do
 
   resources :login
   'login#index'
- 
   
-  root 'carts#index'
+  root 'application#index' #'carts#index'
 
   match "application/toggle_hidden" => "application#toggle_hidden", :as => "toggle_hidden", via: [:get]
   
   # match "application/user1" => "application#user1", :as => "user1", via: [:get]
   # match "application/user2" => "application#user2", :as => "user2", via: [:get]
   
-  match "application/logout" => "application#clear_login", :as => "logout", via: [:get]
+  match "application/logout" => "login#clear_login", :as => "logout", via: [:get]
+  
+  resources :application
+  'application#index'
 
 
 end
