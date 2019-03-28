@@ -4,10 +4,10 @@ class LoginController < ApplicationController
   # GET /users
   # GET /users.json
   def index
-    if cookies.signed[:login_user] && cookies.signed[:login_id]
-        user = User.where("id =" + cookies.signed[:login_id].to_s)        
-        if user.first && cookies.signed[:login_user] == user.first.name &&
-        cookies.signed[:login_id] == user.first.id then
+    if session[:login_user] && session[:login_id]
+        user = User.where("id =" + session[:login_id].to_s)        
+        if user.first && session[:login_user] == user.first.name &&
+        session[:login_id] == user.first.id then
             redirect_to root_path
         end
     end
@@ -21,8 +21,8 @@ class LoginController < ApplicationController
     user = User.where("name like \"" + params[:user] +"\"")
     respond_to do |format|
       if user.first && user.first.password == params[:password]
-        cookies.signed[:login_user] = user.first.name
-        cookies.signed[:login_id] = user.first.id
+        session[:login_user] = user.first.name
+        session[:login_id] = user.first.id
         format.html { redirect_to root_path, notice: 'User was successfully logged in.' }
         # format.json { render :show, status: :created, location: @user }
       else
@@ -35,8 +35,8 @@ class LoginController < ApplicationController
   
   # remove login data
   def clear_login
-    cookies.signed[:login_user] = "-1"
-    cookies.signed[:login_id] = "-1"
+    session[:login_user] = "-1"
+    session[:login_id] = "-1"
     if request.env["REQUEST_URI"] == "/application/logout"
       redirect_to root_path
     else

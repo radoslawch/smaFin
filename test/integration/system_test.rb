@@ -17,13 +17,26 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_redirected_to "/login"
     follow_redirect!
     
-    puts "login test"
-    post "/login", params: { user: "admins", password: "admin" }
-    assert_response :redirect
+    puts "bad login test"
+    post "/login", params: { user: "", password: "" }
+    assert_redirected_to "/login"
+    follow_redirect!
+    
+    puts "controller test after bad login"
+    get carts_url
+    assert_redirected_to "/login"
+    follow_redirect!
+    
+    puts "good login test"
+    post "/login", params: { user: "admin", password: "admin" }
+    assert_redirected_to "/"
+    follow_redirect!
     
     
-    post carts_url, params: { cart: {  } }
-    assert_response :redirect
+    get carts_url, params: { cart: {  } }
+    assert_redirected_to carts_url
+    follow_redirect!
+    
   end
   
   

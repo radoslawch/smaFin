@@ -2,13 +2,13 @@ class CategoriesController < ApplicationController
   def index  
     if !check_permission then return end
     # get categories for logged user
-    @categories = Category.where("user_id =" + cookies.signed[:login_id].to_s)
+    @categories = Category.where("user_id =" + session[:login_id].to_s)
   end
 
   def show
     if !check_permission then return end
     @category = Category.find(params[:id])
-    @category.current_user_id = cookies.signed[:login_id]
+    @category.current_user_id = session[:login_id]
     
     unless @category
         redirect_to  subcategories_path, notice: 'error, category does not exist'
@@ -28,7 +28,7 @@ class CategoriesController < ApplicationController
   def edit
     if !check_permission then return end
     @category = Category.find(params[:id])
-    @category.current_user_id = cookies.signed[:login_id]
+    @category.current_user_id = session[:login_id]
     
     unless @category
         redirect_to subcategories_path, notice: 'error, category does not exist'
@@ -43,11 +43,11 @@ class CategoriesController < ApplicationController
   def create
     if !check_permission then return end
     @category = Category.new(category_params)
-    @category.current_user_id = cookies.signed[:login_id]
+    @category.current_user_id = session[:login_id]
 
     if @category.save
       @subcategory = Subcategory.new(subcategory_params)
-      @subcategory.current_user_id = cookies.signed[:login_id]
+      @subcategory.current_user_id = session[:login_id]
       @subcategory.save!
       redirect_to @category
     else
@@ -58,7 +58,7 @@ class CategoriesController < ApplicationController
   def update
     if !check_permission then return end
     @category = Category.find(params[:id])
-    @category.current_user_id = cookies.signed[:login_id]
+    @category.current_user_id = session[:login_id]
 
     if @category.update(category_params)
       redirect_to @category
@@ -84,7 +84,7 @@ class CategoriesController < ApplicationController
   def hide
     if !check_permission then return end
     @category = Category.find(params[:id])
-    @category.current_user_id = cookies.signed[:login_id]
+    @category.current_user_id = session[:login_id]
     @subcategories = Subcategory.where("category_id = " + @category.id.to_s)
     for subcategory in @subcategories do
       subcategory.hide(@category.current_user_id)
@@ -98,7 +98,7 @@ class CategoriesController < ApplicationController
   def unhide
     if !check_permission then return end
     @category = Category.find(params[:id])
-    @category.current_user_id = cookies.signed[:login_id]
+    @category.current_user_id = session[:login_id]
     @subcategories = Subcategory.where("category_id = " + @category.id.to_s)
     for subcategory in @subcategories do
       subcategory.unhide(@category.current_user_id)
@@ -112,7 +112,7 @@ class CategoriesController < ApplicationController
   
   private
   def category_params
-    params[:category][:user_id] = cookies.signed[:login_id]
+    params[:category][:user_id] = session[:login_id]
     params.require(:category).permit(:category, :name, :user_id)
   end
 

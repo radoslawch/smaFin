@@ -2,7 +2,7 @@ class PurchasesController < ApplicationController
   
   def index #lista wydatków
     if !check_permission then return end
-    @purchases = Purchase.left_joins(:cart).where("user_id =" + cookies.signed[:login_id].to_s)
+    @purchases = Purchase.left_joins(:cart).where("user_id =" + session[:login_id].to_s)
   end
 
   def show
@@ -13,7 +13,7 @@ class PurchasesController < ApplicationController
     end
     
     @purchase = Purchase.find(params[:id])
-    @purchase.current_user_id = cookies.signed[:login_id]
+    @purchase.current_user_id = session[:login_id]
     
     unless @purchase
         redirect_to  purchases_path, notice: 'error, purchase does not exist'
@@ -25,11 +25,11 @@ class PurchasesController < ApplicationController
   def new #nowy wydatek - widok
     if !check_permission then return end
     @purchase = Purchase.new
-    @carts =  Cart.where("user_id =" + cookies.signed[:login_id].to_s)
-    @products = Product.left_joins(:subcategory => :category).where("user_id =" + cookies.signed[:login_id].to_s)
+    @carts =  Cart.where("user_id =" + session[:login_id].to_s)
+    @products = Product.left_joins(:subcategory => :category).where("user_id =" + session[:login_id].to_s)
         
-    @subcategories = Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
-    @categories = Category.where("user_id =" + cookies.signed[:login_id].to_s)
+    @subcategories = Subcategory.left_joins(:category).where("user_id =" + session[:login_id].to_s)
+    @categories = Category.where("user_id =" + session[:login_id].to_s)
     
     notice_string = ""
     if @carts.length == 0 then
@@ -52,13 +52,13 @@ class PurchasesController < ApplicationController
   def edit
     if !check_permission then return end
     @purchase = Purchase.find(params[:id])
-    @purchase.current_user_id = cookies.signed[:login_id]
+    @purchase.current_user_id = session[:login_id]
     
-    @carts =  Cart.where("user_id =" + cookies.signed[:login_id].to_s)
-    @products = Product.left_joins(:subcategory => :category).where("user_id =" + cookies.signed[:login_id].to_s)
+    @carts =  Cart.where("user_id =" + session[:login_id].to_s)
+    @products = Product.left_joins(:subcategory => :category).where("user_id =" + session[:login_id].to_s)
         
-    @subcategories = Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
-    @categories = Category.where("user_id =" + cookies.signed[:login_id].to_s)
+    @subcategories = Subcategory.left_joins(:category).where("user_id =" + session[:login_id].to_s)
+    @categories = Category.where("user_id =" + session[:login_id].to_s)
     
     unless @purchase
         redirect_to  purchases_path, notice: 'error, purchase does not exist'
@@ -73,13 +73,13 @@ class PurchasesController < ApplicationController
   def create #nowy wydatek - akcja
     if !check_permission then return end
     @purchase = Purchase.new(purchase_params)
-    @purchase.current_user_id = cookies.signed[:login_id]
+    @purchase.current_user_id = session[:login_id]
     
-    @carts =  Cart.where("user_id =" + cookies.signed[:login_id].to_s)
-    @products = Product.left_joins(:subcategory => :category).where("user_id =" + cookies.signed[:login_id].to_s)
+    @carts =  Cart.where("user_id =" + session[:login_id].to_s)
+    @products = Product.left_joins(:subcategory => :category).where("user_id =" + session[:login_id].to_s)
         
-    @subcategories = Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
-    @categories = Category.where("user_id =" + cookies.signed[:login_id].to_s)
+    @subcategories = Subcategory.left_joins(:category).where("user_id =" + session[:login_id].to_s)
+    @categories = Category.where("user_id =" + session[:login_id].to_s)
   
     if @purchase.save
       redirect_to @purchase
@@ -91,13 +91,13 @@ class PurchasesController < ApplicationController
   def update
     if !check_permission then return end
     @purchase = Purchase.find(params[:id])
-    @purchase.current_user_id = cookies.signed[:login_id]
+    @purchase.current_user_id = session[:login_id]
     
-    @carts =  Cart.where("user_id =" + cookies.signed[:login_id].to_s)
-    @products = Product.left_joins(:subcategory => :category).where("user_id =" + cookies.signed[:login_id].to_s)
+    @carts =  Cart.where("user_id =" + session[:login_id].to_s)
+    @products = Product.left_joins(:subcategory => :category).where("user_id =" + session[:login_id].to_s)
         
-    @subcategories = Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
-    @categories = Category.where("user_id =" + cookies.signed[:login_id].to_s)
+    @subcategories = Subcategory.left_joins(:category).where("user_id =" + session[:login_id].to_s)
+    @categories = Category.where("user_id =" + session[:login_id].to_s)
     if @purchase.update(purchase_params)
       #update sucessfull
       #redirect to cart the purchase belongs to
@@ -120,7 +120,7 @@ class PurchasesController < ApplicationController
     @purchase = Purchase.find(params[:id])
     
     # method from a model
-    @purchase.hide(cookies.signed[:login_id])
+    @purchase.hide(session[:login_id])
 
     # redirect_to subcategories_path
     redirect_to @purchase.cart
@@ -131,7 +131,7 @@ class PurchasesController < ApplicationController
     @purchase = Purchase.find(params[:id])
     
     # method from a model
-    @purchase.unhide(cookies.signed[:login_id])
+    @purchase.unhide(session[:login_id])
 
     # redirect_to subcategories_path
     redirect_to @purchase.cart

@@ -2,13 +2,13 @@ class ProductsController < ApplicationController
   
   def index #lista produktow
     if !check_permission then return end
-    @products = Product.left_joins(:subcategory => :category).where("user_id =" + cookies.signed[:login_id].to_s)
+    @products = Product.left_joins(:subcategory => :category).where("user_id =" + session[:login_id].to_s)
   end
 
   def show
     if !check_permission then return end
     @product = Product.find(params[:id])
-    @product.current_user_id = cookies.signed[:login_id]
+    @product.current_user_id = session[:login_id]
     
     unless @product
         redirect_to  products_path, notice: 'error, product does not exist'
@@ -24,8 +24,8 @@ class ProductsController < ApplicationController
   def new #nowy wydatek - widok
     if !check_permission then return end
     @product = Product.new
-    @categories =  Category.where("user_id =" + cookies.signed[:login_id].to_s)
-    @subcategories =  Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
+    @categories =  Category.where("user_id =" + session[:login_id].to_s)
+    @subcategories =  Subcategory.left_joins(:category).where("user_id =" + session[:login_id].to_s)
     if @categories.length == 0 then
         redirect_to products_path, notice: "Add a category first!"
     elsif @subcategories.length == 0 then
@@ -37,11 +37,11 @@ class ProductsController < ApplicationController
     if !check_permission then return end
     # left join subcategory to show current subcategory name
     @product = Product.left_joins(:subcategory).find(params[:id])
-    @product.current_user_id = cookies.signed[:login_id]
+    @product.current_user_id = session[:login_id]
     
-    @categories =  Category.where("user_id =" + cookies.signed[:login_id].to_s)
+    @categories =  Category.where("user_id =" + session[:login_id].to_s)
     # is left join needed?
-    @subcategories =  Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
+    @subcategories =  Subcategory.left_joins(:category).where("user_id =" + session[:login_id].to_s)
     
     if !@product
         redirect_to  subcategories_path, notice: 'product not found'
@@ -57,10 +57,10 @@ class ProductsController < ApplicationController
   def create #nowy wydatek - akcja
     if !check_permission then return end
     @product = Product.new(product_params)
-    @product.current_user_id = cookies.signed[:login_id]
+    @product.current_user_id = session[:login_id]
     
-    # @categories =  Category.where("user_id =" + cookies.signed[:login_id].to_s)
-    # @subcategories =  Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
+    # @categories =  Category.where("user_id =" + session[:login_id].to_s)
+    # @subcategories =  Subcategory.left_joins(:category).where("user_id =" + session[:login_id].to_s)
 
     if @product.save
       redirect_to @product
@@ -72,10 +72,10 @@ class ProductsController < ApplicationController
   def update
     if !check_permission then return end
     @product = Product.find(params[:id])
-    @product.current_user_id = cookies.signed[:login_id]
+    @product.current_user_id = session[:login_id]
     
-    # @categories =  Category.where("user_id =" + cookies.signed[:login_id].to_s)
-    # @subcategories =  Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
+    # @categories =  Category.where("user_id =" + session[:login_id].to_s)
+    # @subcategories =  Subcategory.left_joins(:category).where("user_id =" + session[:login_id].to_s)
 
     if @product.update(product_params)
       redirect_to @product
@@ -105,7 +105,7 @@ class ProductsController < ApplicationController
     @product = Product.find(params[:id])
 
     # method from a model
-    @product.hide(cookies.signed[:login_id])
+    @product.hide(session[:login_id])
 
     redirect_to products_path
   end  
@@ -115,7 +115,7 @@ class ProductsController < ApplicationController
     @product = Product.find(params[:id])
 
     # method from a model
-    @product.unhide(cookies.signed[:login_id])
+    @product.unhide(session[:login_id])
 
     redirect_to products_path
   end 

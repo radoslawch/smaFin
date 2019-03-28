@@ -4,7 +4,7 @@ class CartsController < ApplicationController
   def index
     if !check_permission then return end
     # get carts for logged user
-    @carts = Cart.where("user_id =" + cookies.signed[:login_id].to_s)
+    @carts = Cart.where("user_id =" + session[:login_id].to_s)
   end
 
 # show a cart
@@ -15,15 +15,15 @@ class CartsController < ApplicationController
     # to show chosen cart
     @cart = Cart.find(params[:id]) 
     # which contains some purchases
-    @purchases = Purchase.left_joins(:cart).where("cart_id =" + params[:id] + " and user_id =" + cookies.signed[:login_id].to_s)
+    @purchases = Purchase.left_joins(:cart).where("cart_id =" + params[:id] + " and user_id =" + session[:login_id].to_s)
     
     # to add next purchase easly
     @purchase = Purchase.new
     # to chose a product to add
-    @products =  Product.left_joins(:subcategory => :category).where("user_id =" + cookies.signed[:login_id].to_s)
+    @products =  Product.left_joins(:subcategory => :category).where("user_id =" + session[:login_id].to_s)
     # which has some category and subcategory
-    @subcategories =  Subcategory.left_joins(:category).where("user_id =" + cookies.signed[:login_id].to_s)
-    @categories =  Category.where("user_id =" + cookies.signed[:login_id].to_s)
+    @subcategories =  Subcategory.left_joins(:category).where("user_id =" + session[:login_id].to_s)
+    @categories =  Category.where("user_id =" + session[:login_id].to_s)
     
     @cant_add_purchase_reason = ""
     if @categories.length == 0 then
@@ -36,7 +36,7 @@ class CartsController < ApplicationController
       @cant_add_purchase_reason = @cant_add_purchase_reason + "Add a product first! "
     end
     
-    @cart.current_user_id = cookies.signed[:login_id]
+    @cart.current_user_id = session[:login_id]
     if !@cart.valid?
       redirect_to carts_path, notice: @cart.errors.full_messages.join(', ')
     end
@@ -53,7 +53,7 @@ class CartsController < ApplicationController
     if !check_permission then return end
     @cart = Cart.find(params[:id])
     
-    @cart.current_user_id = cookies.signed[:login_id]
+    @cart.current_user_id = session[:login_id]
     if !@cart.valid?
       redirect_to carts_path, notice: @cart.errors.full_messages.join(', ')
     end
@@ -63,7 +63,7 @@ class CartsController < ApplicationController
   def create
     if !check_permission then return end
     @cart = Cart.new(cart_params)
-    @cart.current_user_id = cookies.signed[:login_id]
+    @cart.current_user_id = session[:login_id]
 
     if @cart.save
       redirect_to @cart
@@ -76,7 +76,7 @@ class CartsController < ApplicationController
   def update
     if !check_permission then return end
     @cart = Cart.find(params[:id])
-    @cart.current_user_id = cookies.signed[:login_id]
+    @cart.current_user_id = session[:login_id]
 
     if @cart.update(cart_params)
       redirect_to @cart
@@ -108,7 +108,7 @@ class CartsController < ApplicationController
     @cart = Cart.find(params[:id])
     
     # method from a model
-    @cart.hide(cookies.signed[:login_id])
+    @cart.hide(session[:login_id])
 
     redirect_to carts_path
   end    
@@ -118,7 +118,7 @@ class CartsController < ApplicationController
     @cart = Cart.find(params[:id])
     
     # method from a model
-    @cart.unhide(cookies.signed[:login_id])
+    @cart.unhide(session[:login_id])
 
     redirect_to carts_path
   end  
@@ -126,16 +126,16 @@ class CartsController < ApplicationController
 
   private    
   def cart_params
-    # params.require(:cart).permit(:name, :creation_date, "dupa",   :user_id => [cookies.signed[:login_id].to_s]) 
+    # params.require(:cart).permit(:name, :creation_date, "dupa",   :user_id => [session[:login_id].to_s]) 
     # params = ActionController::Parameters.new({
       # cart: {
         # name: @cart.name,
         # creation_date:  @cart.creation_date,
-        # user_id: cookies.signed[:login_id]
+        # user_id: session[:login_id]
       # }
     # })
    # params.require(:cart).permit(:name, :created, :user_id)
-  params[:cart][:user_id] = cookies.signed[:login_id]
+  params[:cart][:user_id] = session[:login_id]
   params.require(:cart).permit(:name, :creation_date, :user_id)
   end
 end

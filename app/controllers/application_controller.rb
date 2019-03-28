@@ -43,11 +43,11 @@ class ApplicationController < ActionController::Base
   # check if cookies indicate that user is logged it
   def check_login
   # get the cookie value
-    if !cookies.signed[:login_id].nil?
-        user = User.where("id =" + cookies.signed[:login_id].to_s)
+    if !session[:login_id].nil?
+        user = User.where("id =" + session[:login_id].to_s)
     end
   # check if it corresponds with any user
-    if user && user.first && cookies.signed[:login_user] == user.first.name then
+    if user && user.first && session[:login_user] == user.first.name then
         true
     else
   # redirect to login path if not
@@ -62,7 +62,7 @@ class ApplicationController < ActionController::Base
       # assuming roles in format "controllerName_actionName" - permission to an action
       # or "controllerName" - permission to a controller
       # or "*" - permission to everything
-        sql_query = "user_id =" + cookies.signed[:login_id].to_s +
+        sql_query = "user_id =" + session[:login_id].to_s +
         " AND (name like \"" + controller_name.to_s + "_" + action_name.to_s + "\"" +
         " OR name like \"" + controller_name.to_s + "\"" +
         " OR name like \"*\")"
@@ -73,20 +73,24 @@ class ApplicationController < ActionController::Base
     if (roles && roles.length < 1) then
       if !request.env["HTTP_REFERER"].nil? then
         # avoid redirection loop
-        if request.env["HTTP_REFERER"] != cookies.signed[:last_HTTP_REFERER] then
-          cookies.signed[:last_HTTP_REFERER] = request.env["HTTP_REFERER"]
+        if request.env["HTTP_REFERER"] != session[:last_HTTP_REFERER] then
+          session[:last_HTTP_REFERER] = request.env["HTTP_REFERER"]
+          # no permissions
           redirect_to :back, notice: 'no permissions, sorry'
           return false 
         else
+          # no permissions at all, nowhere to redirect to
           redirect_to logout_path, notice: 'account has no permissions, '
           return false 
         end
       else
+        # no referer, try going to index
         redirect_to application_index_path, notice: 'no permissions, sorry'
-      return false 
-      end      
-      return true
+        return false 
+      end
     end
-  return false 
+    
+    # has permissions
+    return true 
   end 
 end
