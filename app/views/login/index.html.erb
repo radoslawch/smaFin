@@ -2,10 +2,10 @@
 <h1>login</h1>
 
 <%= form_tag("/login", method: "post") do %>
-  <%= label_tag(:u, "user:") %>
-  <%= text_field_tag(:u, nil, :autofocus => true) %>
-  <%= label_tag(:p, "password:") %>
-  <%= password_field_tag(:p) %>
+  <%= label_tag(:user, "user:") %>
+  <%= text_field_tag(:user, nil, :autofocus => true) %>
+  <%= label_tag(:password, "password:") %>
+  <%= password_field_tag(:password) %>
   <%= submit_tag("login") %>
 <% end %>
 

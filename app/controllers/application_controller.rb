@@ -71,20 +71,22 @@ class ApplicationController < ActionController::Base
     end
     
     if (roles && roles.length < 1) then
-
       if !request.env["HTTP_REFERER"].nil? then
         # avoid redirection loop
         if request.env["HTTP_REFERER"] != cookies.signed[:last_HTTP_REFERER] then
           cookies.signed[:last_HTTP_REFERER] = request.env["HTTP_REFERER"]
           redirect_to :back, notice: 'no permissions, sorry'
+          return false 
         else
           redirect_to logout_path, notice: 'account has no permissions, '
+          return false 
         end
       else
         redirect_to application_index_path, notice: 'no permissions, sorry'
-      end 
-      return false
+      return false 
+      end      
+      return true
     end
-  return true 
+  return false 
   end 
 end

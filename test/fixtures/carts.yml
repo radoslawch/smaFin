@@ -3,11 +3,13 @@
 one:
   id: 1
   name: MyString
+  user: one
   hidden: false
   creation_date: 2017-05-20 13:56:36
 
 two:
   id: 2
   name: MyString
+  user: two
   hidden: false
   creation_date: 2017-05-20 13:56:36

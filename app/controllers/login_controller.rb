@@ -18,9 +18,9 @@ class LoginController < ApplicationController
   # POST /users
   # POST /users.json
   def create
-    user = User.where("name like \"" + params[:u] +"\"")
+    user = User.where("name like \"" + params[:user] +"\"")
     respond_to do |format|
-      if user.first && user.first.password == params[:p]
+      if user.first && user.first.password == params[:password]
         cookies.signed[:login_user] = user.first.name
         cookies.signed[:login_id] = user.first.id
         format.html { redirect_to root_path, notice: 'User was successfully logged in.' }
