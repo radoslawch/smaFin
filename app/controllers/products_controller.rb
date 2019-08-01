@@ -7,6 +7,7 @@ class ProductsController < ApplicationController
 
   def show
     if !check_permission then return end
+    
     @product = Product.find(params[:id])
     @product.current_user_id = session[:login_id]
     
@@ -16,7 +17,7 @@ class ProductsController < ApplicationController
     
     # workaround for no auto-validation on this action
     if !@product.valid?
-        redirect_to  products_path, notice: @product.errors.full_messages.join(', ')
+        redirect_to products_path, notice: @product.errors.full_messages.join(', ')
     end
     
   end
@@ -44,7 +45,7 @@ class ProductsController < ApplicationController
     @subcategories =  Subcategory.left_joins(:category).where("user_id =" + session[:login_id].to_s)
     
     if !@product
-        redirect_to  subcategories_path, notice: 'product not found'
+        redirect_to subcategories_path, notice: 'product not found'
     end  
     
     # workaround for no auto-validation on this action
@@ -59,12 +60,12 @@ class ProductsController < ApplicationController
     @product = Product.new(product_params)
     @product.current_user_id = session[:login_id]
     
-    # @categories =  Category.where("user_id =" + session[:login_id].to_s)
-    # @subcategories =  Subcategory.left_joins(:category).where("user_id =" + session[:login_id].to_s)
 
     if @product.save
       redirect_to @product
     else
+      @categories =  Category.where("user_id =" + session[:login_id].to_s)
+      @subcategories =  Subcategory.left_joins(:category).where("user_id =" + session[:login_id].to_s)
       render 'new'
     end
   end
@@ -74,12 +75,13 @@ class ProductsController < ApplicationController
     @product = Product.find(params[:id])
     @product.current_user_id = session[:login_id]
     
-    # @categories =  Category.where("user_id =" + session[:login_id].to_s)
-    # @subcategories =  Subcategory.left_joins(:category).where("user_id =" + session[:login_id].to_s)
+    
 
     if @product.update(product_params)
       redirect_to @product
     else
+      @categories =  Category.where("user_id =" + session[:login_id].to_s)
+      @subcategories =  Subcategory.left_joins(:category).where("user_id =" + session[:login_id].to_s)
       render 'edit'
     end
   end
@@ -87,17 +89,22 @@ class ProductsController < ApplicationController
   def destroy
     if !check_permission then return end
     @product = Product.find(params[:id])
-    
-    @purchases = Purchase.where("product_id = " + @product.id.to_s)
-    
-    if @purchases.length > 0 then
-      for purchase in @purchases do
-        purchase.destroy
-      end
-    end
-    @product.destroy
-
+    @product.destroy_cascade(session[:login_id])
+    # @product.destroy
     redirect_to products_path
+    
+    # @product = Product.find(params[:id])
+    
+    # @purchases = Purchase.where("product_id = " + @product.id.to_s)
+    
+    # if @purchases.length > 0 then
+      # for purchase in @purchases do
+        # purchase.destroy
+      # end
+    # end
+    # @product.destroy
+
+    # redirect_to products_path
   end
 
   def hide

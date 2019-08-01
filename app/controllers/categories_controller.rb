@@ -70,43 +70,57 @@ class CategoriesController < ApplicationController
   def destroy
     if !check_permission then return end
     @category = Category.find(params[:id])
-    @subcategories = Subcategory.where("category_id = " + @category.id.to_s)
-    
-    for subcategory in @subcategories do
-      subcategory.destroy
-    end
-    
-    @category.destroy
-
+    @category.destroy_cascade(session[:login_id])
+    # @category.destroy
     redirect_to categories_path
+    
+    
+    # @category = Category.find(params[:id])
+    # @subcategories = Subcategory.where("category_id = " + @category.id.to_s)
+    
+    # for subcategory in @subcategories do
+      # subcategory.destroy(@category.current_user_id)
+    # end
+    
+    # @category.destroy
+
+    # redirect_to categories_path
   end
 
   def hide
     if !check_permission then return end
     @category = Category.find(params[:id])
-    @category.current_user_id = session[:login_id]
-    @subcategories = Subcategory.where("category_id = " + @category.id.to_s)
-    for subcategory in @subcategories do
-      subcategory.hide(@category.current_user_id)
-    end
-    @category.hidden = true
-    @category.save!
-
+    @category.hide(session[:login_id])
     redirect_to categories_path
+    
+    # @category = Category.find(params[:id])
+    # @category.current_user_id = session[:login_id]
+    # @subcategories = Subcategory.where("category_id = " + @category.id.to_s)
+    # for subcategory in @subcategories do
+      # subcategory.hide(@category.current_user_id)
+    # end
+    # @category.hidden = true
+    # @category.save!
+
+    # redirect_to categories_path
   end  
   
   def unhide
     if !check_permission then return end
     @category = Category.find(params[:id])
-    @category.current_user_id = session[:login_id]
-    @subcategories = Subcategory.where("category_id = " + @category.id.to_s)
-    for subcategory in @subcategories do
-      subcategory.unhide(@category.current_user_id)
-    end
-    @category.hidden = false
-    @category.save!
-
+    @category.unhide(session[:login_id])
     redirect_to categories_path
+    
+    # @category = Category.find(params[:id])
+    # @category.current_user_id = session[:login_id]
+    # @subcategories = Subcategory.where("category_id = " + @category.id.to_s)
+    # for subcategory in @subcategories do
+      # subcategory.unhide(@category.current_user_id)
+    # end
+    # @category.hidden = false
+    # @category.save!
+
+    # redirect_to categories_path
   end 
   
   

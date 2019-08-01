@@ -7,10 +7,6 @@ class PurchasesController < ApplicationController
 
   def show
     if !check_permission then return end
-    # workaround for no auto-validation on this action
-    if !@purchase.valid?
-        redirect_to purchases_path, notice: @purchase.errors.full_messages.join(', ')
-    end
     
     @purchase = Purchase.find(params[:id])
     @purchase.current_user_id = session[:login_id]
@@ -19,7 +15,11 @@ class PurchasesController < ApplicationController
         redirect_to  purchases_path, notice: 'error, purchase does not exist'
     end
     
-  
+    # workaround for no auto-validation on this action
+    if !@purchase.valid?
+        redirect_to purchases_path, notice: @purchase.errors.full_messages.join(', ')
+    end
+    
   end
 
   def new #nowy wydatek - widok
@@ -82,8 +82,9 @@ class PurchasesController < ApplicationController
     @categories = Category.where("user_id =" + session[:login_id].to_s)
   
     if @purchase.save
-      redirect_to @purchase
+      redirect_to @purchase.cart
     else
+    puts @purchase.errors.inspect
       render 'new'
     end
   end
@@ -110,9 +111,10 @@ class PurchasesController < ApplicationController
   def destroy
     if !check_permission then return end
     @purchase = Purchase.find(params[:id])
-    @purchase.destroy
+    @purchase.destroy_cascade(session[:login_id])
+    # @purchase.destroy
 
-    redirect_to spendings_path
+    redirect_to purchases_path
   end
   
   def hide

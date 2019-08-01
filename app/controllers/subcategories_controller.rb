@@ -55,7 +55,7 @@ class SubcategoriesController < ApplicationController
     @subcategory = Subcategory.new(subcategory_params)
     @subcategory.current_user_id = session[:login_id]
     
-    # @categories = Category.where("user_id =" + session[:login_id].to_s)
+    @categories = Category.where("user_id =" + session[:login_id].to_s)
     
     if @subcategory.save
       redirect_to @subcategory
@@ -66,10 +66,10 @@ class SubcategoriesController < ApplicationController
 
   def update
     if !check_permission then return end
-    @subcategory = Subcategory.find(params[:id])
+    @subcategory = Subcategory.left_joins(:category).find(params[:id])
     @subcategory.current_user_id = session[:login_id]
     
-    # @categories = Category.where("user_id =" + session[:login_id].to_s)
+    @categories = Category.where("user_id =" + session[:login_id].to_s)
     
     if @subcategory.update(subcategory_params)
       redirect_to @subcategory
@@ -78,38 +78,40 @@ class SubcategoriesController < ApplicationController
     end
   end
 
+
   def destroy
     if !check_permission then return end
     @subcategory = Subcategory.find(params[:id])
-    @products = Product.where("subcategory_id = " + @subcategory.id.to_s)
-    
-    if products.length > 0 then
-      for product in @products do
-        product.destroy
-      end
-    end
-    @subcategory.destroy
-
+    @subcategory.destroy_cascade(session[:login_id])
+    # @subcategory.destroy
     redirect_to subcategories_path
+    
+    
+    # @subcategory = Subcategory.find(params[:id])
+    # @products = Product.where("subcategory_id = " + @subcategory.id.to_s)
+    # if @products.length > 0 then
+      # for product in @products do
+        # product.destroy
+      # end
+    # end
+    # @subcategory.destroy
+
+    # redirect_to subcategories_path
   end
   
   def hide
     if !check_permission then return end
-    @subcategory = Subcategory.find(params[:id])
-    
+    @subcategory = Subcategory.find(params[:id])    
     # method from a model
     @subcategory.hide(session[:login_id])
-
     redirect_to subcategories_path
   end  
   
   def unhide
     if !check_permission then return end
-    @subcategory = Subcategory.find(params[:id])
-    
+    @subcategory = Subcategory.find(params[:id])    
     # method from a model
     @subcategory.unhide(session[:login_id])
-
     redirect_to subcategories_path
   end
 

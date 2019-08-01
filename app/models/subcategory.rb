@@ -1,7 +1,7 @@
 class SubcategoryValidator < ActiveModel::Validator
   def validate(record)
     # check if subcategory is in category that belongs to current user
-    if (record.category.user_id != record.current_user_id) then
+    if (record.category.nil? || record.category.user_id != record.current_user_id) then
       record.errors[:category] << " of subcategory must belong to current user"
     end
   end
@@ -36,16 +36,32 @@ class Subcategory < ApplicationRecord
   # a method for CategoriesController for cascade unhide
   def unhide(current_user_id)
     self.current_user_id = current_user_id
-    products = Product.where("subcategory_id = " + self.id.to_s)
-    if products.length > 0
-      for product in products do
-        product.hide(current_user_id)
-      end
-    end
+    # bad logic: unhiding subcategory should unhide category
+    # products = Product.where("subcategory_id = " + self.id.to_s)
+    # if products.length > 0
+      # for product in products do
+        # product.unhide(current_user_id)
+      # end
+    # end
+    Category.find(self.category_id).unhide(current_user_id)
+    
     
     self.hidden = false
     self.save
-  end  
+  end
+  
+  # a method for CategoriesController for cascade destroy
+  def destroy_cascade(current_user_id)
+    self.current_user_id = current_user_id
+    products = Product.where("subcategory_id = " + self.id.to_s)
+    if products.length > 0
+      for product in products do
+        product.destroy_cascade(current_user_id)
+      end
+    end
+    self.destroy
+  end 
+  
 end
 
 

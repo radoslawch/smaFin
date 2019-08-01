@@ -2,6 +2,7 @@ Rails.application.routes.draw do
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
+  match "application/no_permissions" => "application#no_permissions", via: [:get]
   resources :carts
   'carts#index'
   match "carts/:id/hide" => "carts#hide", :as => "hide_cart", via: [:post]
@@ -43,7 +44,8 @@ Rails.application.routes.draw do
   # match "application/user1" => "application#user1", :as => "user1", via: [:get]
   # match "application/user2" => "application#user2", :as => "user2", via: [:get]
   
-  match "application/logout" => "login#clear_login", :as => "logout", via: [:get]
+  # match "application/logout" => "login#clear_login", via: [:get]
+  match "logout" => "login#clear_login", via: [:get]
   
   resources :application
   'application#index'

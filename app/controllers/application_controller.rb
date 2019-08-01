@@ -40,6 +40,10 @@ class ApplicationController < ActionController::Base
     # end
   # end
   
+  def no_permissions
+    # if !check_permission then return end
+  end
+  
   # check if cookies indicate that user is logged it
   def check_login
   # get the cookie value
@@ -48,16 +52,17 @@ class ApplicationController < ActionController::Base
     end
   # check if it corresponds with any user
     if user && user.first && session[:login_user] == user.first.name then
-        true
+      return true
     else
   # redirect to login path if not
-        redirect_to login_index_path, notice: (notice || "") + 'please log in' 
-        return
+      if !performed? then redirect_to login_index_path, notice: (notice || "") + 'please log in' end 
+      return false
     end
   end
 
   # check for user's permissions to an action
   def check_permission
+  
     if check_login then
       # assuming roles in format "controllerName_actionName" - permission to an action
       # or "controllerName" - permission to a controller
@@ -70,27 +75,30 @@ class ApplicationController < ActionController::Base
         roles = Role.where(sql_query)
     end
     
-    if (roles && roles.length < 1) then
+    if ((roles && roles.length < 1) || !roles) then
+      if !performed? then redirect_to application_no_permissions_path, notice: 'no permissions, sorry ' end
+      return false
+=begin
       if !request.env["HTTP_REFERER"].nil? then
         # avoid redirection loop
         if request.env["HTTP_REFERER"] != session[:last_HTTP_REFERER] then
           session[:last_HTTP_REFERER] = request.env["HTTP_REFERER"]
           # no permissions
-          redirect_to :back, notice: 'no permissions, sorry'
+          if !performed? then redirect_to :back, notice: 'no permissions, sorry ' end
           return false 
         else
           # no permissions at all, nowhere to redirect to
-          redirect_to logout_path, notice: 'account has no permissions, '
+          if !performed? then redirect_to logout_path, notice: 'account has no permissions, ' end
           return false 
         end
       else
         # no referer, try going to index
-        redirect_to application_index_path, notice: 'no permissions, sorry'
+        if !performed? then redirect_to application_index_path, notice: 'no permissions, sorry ' end
         return false 
       end
+=end
     end
-    
     # has permissions
-    return true 
+    return true
   end 
 end

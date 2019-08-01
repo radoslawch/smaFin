@@ -102,7 +102,7 @@ function refresh_subcategories(fullRefresh = true){
     }else{
       subcategory_options[i].hidden=true;
     }
-<% if @purchase.product_id %>
+<% if @purchase.product %>
     if(<%= @purchase.product.subcategory_id %> == subcategory_options[i].value && fullRefresh){
       subcategory_options[selected_index].selected = false;
       subcategory_options[i].selected = true;
@@ -130,7 +130,7 @@ function refresh_products(fullRefresh){
     }else{
       product_options[i].hidden=true;
     }
-<% if @purchase.product_id %>
+<% if @purchase.product %>
     if(<%= @purchase.product.subcategory_id %> == product_options[i].value && fullRefresh){
       is_current_subcategory_visible = true;
       product_options[i].selected = true;

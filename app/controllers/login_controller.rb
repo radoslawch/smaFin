@@ -37,7 +37,7 @@ class LoginController < ApplicationController
   def clear_login
     session[:login_user] = "-1"
     session[:login_id] = "-1"
-    if request.env["REQUEST_URI"] == "/application/logout"
+    if request.env["REQUEST_URI"] == "/logout"
       redirect_to root_path
     else
     end
@@ -52,7 +52,7 @@ class LoginController < ApplicationController
 	
 
     # Never trust parameters from the scary internet, only allow the white list through.
-    def user_params
-      params.fetch(:user, {})
+    def login_params
+      # params.require(:login).permit(:paassword)
     end
 end

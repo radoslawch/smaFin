@@ -32,12 +32,12 @@ class RolesController < ApplicationController
   def create
     if !check_permission then return end
     @role = Role.new(role_params)
-
     respond_to do |format|
       if @role.save
         format.html { redirect_to @role, notice: 'Role was successfully created.' }
         format.json { render :show, status: :created, location: @role }
       else
+        @users = User.all
         format.html { render :new }
         format.json { render json: @role.errors, status: :unprocessable_entity }
       end
@@ -53,6 +53,7 @@ class RolesController < ApplicationController
         format.html { redirect_to @role, notice: 'Role was successfully updated.' }
         format.json { render :show, status: :ok, location: @role }
       else
+      raise "k"
         format.html { render :edit }
         format.json { render json: @role.errors, status: :unprocessable_entity }
       end
@@ -78,6 +79,9 @@ class RolesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def role_params
-      params.fetch(:role, {}).permit(:user_id, :name)
+      params.
+      # require(:role).
+      fetch(:role, {}).
+      permit(:user_id, :name)
     end
 end

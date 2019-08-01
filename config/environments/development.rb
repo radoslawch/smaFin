@@ -53,7 +53,7 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   # my configs
-  config.web_console.whitelisted_ips = ['192.168.145.1', '192.168.124.101']
+  config.web_console.whitelisted_ips = ['192.168.145.1', '192.168.124.101', '192.168.56.1']
   
   config.action_controller.perform_caching             = false
   

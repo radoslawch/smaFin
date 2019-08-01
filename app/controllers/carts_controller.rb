@@ -89,17 +89,21 @@ class CartsController < ApplicationController
   def destroy
     if !check_permission then return end
     @cart = Cart.find(params[:id])
-    
-    @purchases = Purchase.where("cart_id = " + @cart.id.to_s)
-    
-    if @purchases.length > 0 then
-      for purchase in @purchases do
-        purchase.destroy
-      end
-    end
-    @cart.destroy
-
+    @cart.destroy_cascade(session[:login_id])
+    # @cart.destroy
     redirect_to carts_path
+    
+    # @cart = Cart.find(params[:id])
+    
+    # @purchases = Purchase.where("cart_id = " + @cart.id.to_s)
+    
+    # if @purchases.length > 0 then
+      # for purchase in @purchases do
+        # purchase.destroy
+      # end
+    # end
+
+    # redirect_to carts_path
   end
 
 # hide a cart (mark as hidden)

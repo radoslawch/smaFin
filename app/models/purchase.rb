@@ -41,7 +41,23 @@ class Purchase < ApplicationRecord
   def unhide(current_user_id)
     self.current_user_id = current_user_id
 
+    # bad logic: unhiding purchase should unhide product and cart
+    Product.find(self.product_id).unhide(current_user_id)
+    Cart.find(self.cart_id).unhide(current_user_id)
+    
     self.hidden = false
     self.save
   end 
+  
+  def destroy_cascade(current_user_id)
+    # self.current_user_id = current_user_id
+    # purchases = Purchase.where("cart_id = " + self.id.to_s)
+    # if purchases.length > 0
+      # for purchase in purchases do
+        # purchase.destroy(current_user_id)
+      # end
+    # end
+    self.destroy
+  end
+  
 end

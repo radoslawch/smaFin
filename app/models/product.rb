@@ -1,7 +1,8 @@
 class ProductValidator < ActiveModel::Validator
   def validate(record)
     # check if product is in subcategory that is in category that belongs to current user
-    if (record.subcategory.category.user_id != record.current_user_id) then
+    if (record.subcategory.nil? || record.subcategory.category.nil? ||
+    record.subcategory.category.user_id != record.current_user_id) then
       record.errors[:category] << " of subcategory of product must belong to current user"
     end
   end
@@ -25,7 +26,7 @@ class Product < ApplicationRecord
     purchases = Purchase.where("product_id = " + self.id.to_s)
     if purchases.length > 0
       for purchase in purchases do
-        # purchase.hide(current_user_id)
+        purchase.hide(current_user_id)
       end
     end
     
@@ -36,14 +37,30 @@ class Product < ApplicationRecord
   # a method for SubategoriesController for cascade unhide
   def unhide(current_user_id)
     self.current_user_id = current_user_id
+    # bad logic: unhiding product should unhide subcategory
+    # purchases = Purchase.where("product_id = " + self.id.to_s)
+    # if purchases.length > 0
+      # for purchase in purchases do
+        # purchase.unhide(current_user_id)
+      # end
+    # end
+    Subcategory.find(self.subcategory_id).unhide(current_user_id)
+    
+    
+    self.hidden = false
+    self.save
+  end
+
+  # a method for SubategoriesController for cascade destroy
+  def destroy_cascade(current_user_id)
+    self.current_user_id = current_user_id
     purchases = Purchase.where("product_id = " + self.id.to_s)
     if purchases.length > 0
       for purchase in purchases do
-        # purchase.unhide(current_user_id)
+        purchase.destroy_cascade(current_user_id)
       end
     end
-    
-    self.hidden = true
-    self.save
-  end   
+    self.destroy
+  end 
+  
 end

@@ -15,7 +15,7 @@
       </ul>
     </div>
   <% end %>
-
+  
 
   <p>
     <%= f.label :subcategory_name %><br>
@@ -25,7 +25,7 @@
   <p>
     <%= f.label :category_name %><br>
     <!-- <%= f.text_field :category_id %> -->
-    <%= f.select(:category_id, options_from_collection_for_select(@categories, 'id', 'name', @subcategory.category_id || "")) %>
+    <%= f.select(:category_id, options_from_collection_for_select(@categories, 'id', 'name', @subcategory.category_id ? @subcategory.category_id : "")) %>
   </p>
 
   <p>
