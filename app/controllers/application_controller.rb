@@ -3,6 +3,9 @@ class ApplicationController < ActionController::Base
 
   def index
     if !check_permission then return end
+     #render :layout => 'application'
+     render layout: 'application'
+    #33
   end
   
   def toggle_hidden
@@ -21,24 +24,6 @@ class ApplicationController < ActionController::Base
       redirect_to(:back)
     end
   end
-  
-  # def user1
-    # session[:user_id ] = 1
-    # if request.env["HTTP_REFERER"].nil?
-      # redirect_to root_path
-    # else
-      # redirect_to(:back)
-    # end
-  # end  
-  
-  # def user2
-    # session[:user_id ] = 2
-    # if request.env["HTTP_REFERER"].nil?
-      # redirect_to root_path
-    # else
-      # redirect_to(:back)
-    # end
-  # end
   
   def no_permissions
     # if !check_permission then return end
@@ -61,8 +46,7 @@ class ApplicationController < ActionController::Base
   end
 
   # check for user's permissions to an action
-  def check_permission
-  
+  def check_permission  
     if check_login then
       # assuming roles in format "controllerName_actionName" - permission to an action
       # or "controllerName" - permission to a controller
@@ -71,34 +55,16 @@ class ApplicationController < ActionController::Base
         " AND (name like \"" + controller_name.to_s + "_" + action_name.to_s + "\"" +
         " OR name like \"" + controller_name.to_s + "\"" +
         " OR name like \"*\")"
-        logger.error sql_query
+        
         roles = Role.where(sql_query)
     end
     
     if ((roles && roles.length < 1) || !roles) then
       if !performed? then redirect_to application_no_permissions_path, notice: 'no permissions, sorry ' end
       return false
-=begin
-      if !request.env["HTTP_REFERER"].nil? then
-        # avoid redirection loop
-        if request.env["HTTP_REFERER"] != session[:last_HTTP_REFERER] then
-          session[:last_HTTP_REFERER] = request.env["HTTP_REFERER"]
-          # no permissions
-          if !performed? then redirect_to :back, notice: 'no permissions, sorry ' end
-          return false 
-        else
-          # no permissions at all, nowhere to redirect to
-          if !performed? then redirect_to logout_path, notice: 'account has no permissions, ' end
-          return false 
-        end
-      else
-        # no referer, try going to index
-        if !performed? then redirect_to application_index_path, notice: 'no permissions, sorry ' end
-        return false 
-      end
-=end
     end
     # has permissions
     return true
   end 
+
 end
