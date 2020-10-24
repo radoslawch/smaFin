@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# This is main application class with global methodes.
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
@@ -10,15 +13,8 @@ class ApplicationController < ActionController::Base
   end
 
   def toggle_hidden
-    # toggle "show_hidden" value in cookies
-    cookies[:show_hidden] = if cookies[:show_hidden] == '0'
-                              '1'
-                            else
-                              '0'
-                            end
-    logger.info request.env['HTTP_REFERER']
+    cookies[:show_hidden] = (cookies[:show_hidden] == '0' ? '1' : '0')
 
-    # go back or go to main page
     if request.env['HTTP_REFERER'].nil?
       redirect_to root_path
     else
@@ -33,13 +29,13 @@ class ApplicationController < ActionController::Base
   # check if cookies indicate that user is logged it
   def check_login
     # get the cookie value
-    user = User.where('id =' + session[:login_id].to_s) unless session[:login_id].nil?
+    user = User.where("id=#{session[:login_id]}") unless session[:login_id].nil?
     # check if it corresponds with any user
-    if user && user.first && session[:login_user] == user.first.name
+    if user&.first && session[:login_user] == user.first.name
       true
     else
       # redirect to login path if not
-      redirect_to login_index_path, notice: (notice || '') + 'please log in' unless performed?
+      redirect_to login_index_path, notice: "#{notice}; please log in" unless performed?
       false
     end
   end
@@ -50,19 +46,16 @@ class ApplicationController < ActionController::Base
       # assuming roles in format "controllerName_actionName" - permission to an action
       # or "controllerName" - permission to a controller
       # or "*" - permission to everything
-      sql_query = 'user_id =' + session[:login_id].to_s +
-                  ' AND (name like "' + controller_name.to_s + '_' + action_name.to_s + '"' +
-                  ' OR name like "' + controller_name.to_s + '"' +
-                  ' OR name like "*")'
 
-      roles = Role.where(sql_query)
+      roles = Role.where(['user_id=?
+                            AND (name like ?_?
+                            OR name like ?
+                            OR name like *)',
+                          session[:login_id].to_s, controller_name.to_s, action_name.to_s, controller_name.to_s])
+      return true unless roles&.empty?
     end
 
-    if (roles && roles.length < 1) || !roles
-      redirect_to application_no_permissions_path, notice: 'no permissions, sorry ' unless performed?
-      return false
-    end
-    # has permissions
-    true
+    redirect_to application_no_permissions_path, notice: 'no permissions, sorry ' unless performed?
+    false
   end
 end
