@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Validator for a subcategory.
 class SubcategoryValidator < ActiveModel::Validator
   def validate(record)
     # check if subcategory is in category that belongs to current user
@@ -7,13 +10,15 @@ class SubcategoryValidator < ActiveModel::Validator
   end
 end
 
+# Model for a subcategory.
 class Subcategory < ApplicationRecord
-  attr_accessor :current_user_id # so it's possible to validate that subcategory was added to category that belongs to the current user
+  # so it's possible to validate that subcategory was added to category that belongs to the current user
+  attr_accessor :current_user_id
 
   belongs_to :category
   has_many :products
 
-  validates_uniqueness_of :name, scope: :category_id
+  validates_uniqueness_of :name, scope: :category_id, case_sensitive: false
   validates :name, length: { in: 1..255 }
   validates :category_id, length: { minimum: 1 }
   validates_presence_of :category_id
@@ -22,11 +27,9 @@ class Subcategory < ApplicationRecord
   # a method for CategoriesController for cascade hide
   def hide(current_user_id)
     self.current_user_id = current_user_id
-    products = Product.where('subcategory_id = ' + id.to_s)
-    if products.length > 0
-      products.each do |product|
-        product.hide(current_user_id)
-      end
+    products = Product.where("subcategory_id=#{id}")
+    products.each do |product|
+      product.hide(current_user_id)
     end
 
     self.hidden = true
@@ -52,11 +55,9 @@ class Subcategory < ApplicationRecord
   # a method for CategoriesController for cascade destroy
   def destroy_cascade(current_user_id)
     self.current_user_id = current_user_id
-    products = Product.where('subcategory_id = ' + id.to_s)
-    if products.length > 0
-      products.each do |product|
-        product.destroy_cascade(current_user_id)
-      end
+    products = Product.where("subcategory_id=#{id}")
+    products.each do |product|
+      product.destroy_cascade(current_user_id)
     end
     destroy
   end

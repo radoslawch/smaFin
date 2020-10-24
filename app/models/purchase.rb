@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Validator for a purchase.
 class PurchaseValidator < ActiveModel::Validator
   def validate(record)
     # check if purchase is a product that is in a subcategory that is in category that belongs to current user
@@ -15,13 +18,15 @@ class PurchaseValidator < ActiveModel::Validator
   end
 end
 
+# Model for a purchase.
 class Purchase < ApplicationRecord
-  attr_accessor :current_user_id # so it's possible to validate that subcategory was added to category that belongs to the current user
+  # so it's possible to validate that subcategory was added to category that belongs to the current user
+  attr_accessor :current_user_id
 
   belongs_to :product
   belongs_to :cart
 
-  validates_uniqueness_of :name, scope: :cart_id
+  validates_uniqueness_of :name, scope: :cart_id, case_sensitive: false
   validates :name, length: { in: 1..255 }
   validates :price, length: { in: 1..24 }
   validates :amount, length: { in: 1..24 }
