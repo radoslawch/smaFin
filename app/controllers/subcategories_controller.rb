@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
+# Controller for subcategories of categories.
 class SubcategoriesController < ApplicationController
   def index
     return unless check_permission
 
-    @subcategories = Subcategory.left_joins(:category).where('user_id =' + session[:login_id].to_s)
+    @subcategories = Subcategory.left_joins(:category).where("user_id=#{session[:login_id]}")
   end
 
   def show
@@ -21,8 +24,8 @@ class SubcategoriesController < ApplicationController
     return unless check_permission
 
     @subcategory = Subcategory.new
-    @categories = Category.where('user_id =' + session[:login_id].to_s)
-    redirect_to subcategories_path, notice: 'Add a category first!' if @categories.length == 0
+    @categories = Category.where("user_id=#{session[:login_id]}")
+    redirect_to subcategories_path, notice: 'Add a category first!' if @categories.empty?
   end
 
   def edit
@@ -32,7 +35,7 @@ class SubcategoriesController < ApplicationController
     @subcategory = Subcategory.left_joins(:category).find(params[:id])
     @subcategory.current_user_id = session[:login_id]
 
-    @categories = Category.where('user_id =' + session[:login_id].to_s)
+    @categories = Category.where("user_id=#{session[:login_id]}")
 
     redirect_to subcategories_path, notice: 'subcategory not found' unless @subcategory
 
@@ -47,7 +50,7 @@ class SubcategoriesController < ApplicationController
     @subcategory = Subcategory.new(subcategory_params)
     @subcategory.current_user_id = session[:login_id]
 
-    @categories = Category.where('user_id =' + session[:login_id].to_s)
+    @categories = Category.where("user_id=#{session[:login_id]}")
 
     if @subcategory.save
       redirect_to @subcategory
@@ -62,7 +65,7 @@ class SubcategoriesController < ApplicationController
     @subcategory = Subcategory.left_joins(:category).find(params[:id])
     @subcategory.current_user_id = session[:login_id]
 
-    @categories = Category.where('user_id =' + session[:login_id].to_s)
+    @categories = Category.where("user_id=#{session[:login_id]}")
 
     if @subcategory.update(subcategory_params)
       redirect_to @subcategory

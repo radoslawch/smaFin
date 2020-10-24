@@ -11,13 +11,11 @@
 </p>
 
 
-
-
 Add a product to the cart<br>
 <% if @cant_add_purchase_reason == "" %>
-<%= render 'purchases/form' %>
+  <%= render 'purchases/form' %>
 <% else %>
-<%= @cant_add_purchase_reason %>
+  <%= @cant_add_purchase_reason %>
 <% end %>
 <br>
 

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Controller for roles - user permissions;
 class RolesController < ApplicationController
   before_action :set_role, only: %i[show edit update destroy]
 
@@ -58,7 +61,6 @@ class RolesController < ApplicationController
         format.html { redirect_to @role, notice: 'Role was successfully updated.' }
         format.json { render :show, status: :ok, location: @role }
       else
-        raise 'k'
         format.html { render :edit }
         format.json { render json: @role.errors, status: :unprocessable_entity }
       end

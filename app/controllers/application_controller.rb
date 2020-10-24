@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
-# This is main application class with global methodes.
+# Controller with global application methods.
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   def index
     return unless check_permission
 
-    # render :layout => 'application'
     render layout: 'application'
-    # 33
   end
 
   def toggle_hidden
@@ -48,9 +46,9 @@ class ApplicationController < ActionController::Base
       # or "*" - permission to everything
 
       roles = Role.where(['user_id=?
-                            AND (name like ?_?
-                            OR name like ?
-                            OR name like *)',
+                            AND (name like "?_?"
+                            OR name like "?"
+                            OR name like "*")',
                           session[:login_id].to_s, controller_name.to_s, action_name.to_s, controller_name.to_s])
       return true unless roles&.empty?
     end

@@ -1,9 +1,12 @@
+# frozen_string_literal: true
+
+# Controller for product categories.
 class CategoriesController < ApplicationController
   def index
     return unless check_permission
 
     # get categories for logged user
-    @categories = Category.where('user_id =' + session[:login_id].to_s)
+    @categories = Category.where("user_id=#{session[:login_id]}")
   end
 
   def show
@@ -138,6 +141,6 @@ class CategoriesController < ApplicationController
                                                   category_id: @category.id
                                                 }
                                               })
-    params = params.require(:subcategory).permit(:subcategory, :name, :category_id)
+    params.require(:subcategory).permit(:subcategory, :name, :category_id)
   end
 end

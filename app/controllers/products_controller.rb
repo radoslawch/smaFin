@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
+# Controller for products.
 class ProductsController < ApplicationController
-  def index # lista produktow
+  def index
     return unless check_permission
 
-    @products = Product.left_joins(subcategory: :category).where('user_id =' + session[:login_id].to_s)
+    @products = Product.left_joins(subcategory: :category).where("user_id=#{session[:login_id]}")
   end
 
   def show
@@ -17,15 +20,15 @@ class ProductsController < ApplicationController
     redirect_to products_path, notice: @product.errors.full_messages.join(', ') unless @product.valid?
   end
 
-  def new # nowy wydatek - widok
+  def new
     return unless check_permission
 
     @product = Product.new
-    @categories =  Category.where('user_id =' + session[:login_id].to_s)
-    @subcategories = Subcategory.left_joins(:category).where('user_id =' + session[:login_id].to_s)
-    if @categories.length == 0
+    @categories =  Category.where("user_id=#{session[:login_id]}")
+    @subcategories = Subcategory.left_joins(:category).where("user_id=#{session[:login_id]}")
+    if @categories.empty?
       redirect_to products_path, notice: 'Add a category first!'
-    elsif @subcategories.length == 0
+    elsif @subcategories.empty?
       redirect_to products_path, notice: 'Add a subcategory first!'
     end
   end
@@ -37,9 +40,9 @@ class ProductsController < ApplicationController
     @product = Product.left_joins(:subcategory).find(params[:id])
     @product.current_user_id = session[:login_id]
 
-    @categories =  Category.where('user_id =' + session[:login_id].to_s)
+    @categories =  Category.where("user_id=#{session[:login_id]}")
     # is left join needed?
-    @subcategories = Subcategory.left_joins(:category).where('user_id =' + session[:login_id].to_s)
+    @subcategories = Subcategory.left_joins(:category).where("user_id=#{session[:login_id]}")
 
     redirect_to subcategories_path, notice: 'product not found' unless @product
 
@@ -47,7 +50,7 @@ class ProductsController < ApplicationController
     redirect_to subcategories_path, notice: @product.errors.full_messages.join(', ') unless @product.valid?
   end
 
-  def create # nowy wydatek - akcja
+  def create
     return unless check_permission
 
     @product = Product.new(product_params)
@@ -56,8 +59,8 @@ class ProductsController < ApplicationController
     if @product.save
       redirect_to @product
     else
-      @categories =  Category.where('user_id =' + session[:login_id].to_s)
-      @subcategories = Subcategory.left_joins(:category).where('user_id =' + session[:login_id].to_s)
+      @categories =  Category.where("user_id=#{session[:login_id]}")
+      @subcategories = Subcategory.left_joins(:category).where("user_id=#{session[:login_id]}")
       render 'new'
     end
   end
@@ -71,8 +74,8 @@ class ProductsController < ApplicationController
     if @product.update(product_params)
       redirect_to @product
     else
-      @categories =  Category.where('user_id =' + session[:login_id].to_s)
-      @subcategories = Subcategory.left_joins(:category).where('user_id =' + session[:login_id].to_s)
+      @categories =  Category.where("user_id=#{session[:login_id]}")
+      @subcategories = Subcategory.left_joins(:category).where("user_id=#{session[:login_id]}")
       render 'edit'
     end
   end

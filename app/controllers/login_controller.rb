@@ -1,35 +1,35 @@
-class LoginController < ApplicationController
-  # before_action :set_user, only: [:show, :edit, :update, :destroy]
+# frozen_string_literal: true
 
-  # GET /users
-  # GET /users.json
+# Login controller which authenticates users.
+class LoginController < ApplicationController
   def index
-    if session[:login_user] && session[:login_id]
-      user = User.where('id =' + session[:login_id].to_s)
-      if user.first && session[:login_user] == user.first.name &&
-         session[:login_id] == user.first.id
-        redirect_to root_path
-      end
-    end
-    @users = User.all
+    return unless session[:login_user] && session[:login_id]
+
+    user = User.where("id=#{session[:login_id]}")
+    return unless user.first && user.first.name == session[:login_user]
+
+    redirect_to root_path
+    # @users = User.all
   end
 
   # POST /users
   # POST /users.json
   def create
-    user = User.where('name like "' + params[:user] + '"')
+    user = User.where("name like '#{params[:user]}'")
     respond_to do |format|
-      if user.first && user.first.password == params[:password]
-        session[:login_user] = user.first.name
-        session[:login_id] = user.first.id
+      if user.first&.password == params[:password]
+        login_sucessfull user
         format.html { redirect_to root_path, notice: 'User was successfully logged in.' }
-        # format.json { render :show, status: :created, location: @user }
       else
         clear_login
         format.html { redirect_to :login_index, notice: 'Logon unsuccessful' }
-        # format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  def login_sucessfull(user)
+    session[:login_user] = user.first.name
+    session[:login_id] = user.first.id
   end
 
   # remove login data
