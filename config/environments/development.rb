@@ -54,8 +54,8 @@ Rails.application.configure do
 
   # my configs
   config.web_console.whitelisted_ips = ['192.168.145.1', '192.168.124.101', '192.168.56.1']
-  
-  config.action_controller.perform_caching             = false
-  
+
+  config.action_controller.perform_caching = false
+
   config.reload_classes_only_on_change = false
 end
