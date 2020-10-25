@@ -184,21 +184,26 @@ class SystemTest < ActionDispatch::IntegrationTest
 
     post carts_url, params: { cart: {} }
     assert_response :redirect
+    follow_redirect!
+    assert :success
 
     puts 'open root path'
     get root_path
     assert_redirected_to '/login'
     follow_redirect!
+    assert :success
 
     puts 'bad login test'
     post '/login', params: { user: '', password: '' }
     assert_redirected_to '/login'
     follow_redirect!
+    assert :success
 
     puts 'controller test after bad login'
     get carts_url
     assert_redirected_to '/login'
     follow_redirect!
+    assert :success
   end
 
   def create_a_new_user_with_full_permissions_and_login_as_them
@@ -208,9 +213,11 @@ class SystemTest < ActionDispatch::IntegrationTest
     puts '----------------------------------------------------------------'
 
     puts 'login as an admin'
-    post '/login', params: { user: @user_admin.name, password: @user_admin.password }
+    post '/login', params: { user: @user_admin.name, password: @user_admin.name }
     assert_redirected_to '/'
     follow_redirect!
+    assert :success
+    assert_equal 'admin', session[:login_user]
 
     puts 'controller test after good login'
     get carts_url
@@ -275,9 +282,11 @@ class SystemTest < ActionDispatch::IntegrationTest
     puts '----------------------------------------------------------------'
 
     puts 'login as an admin'
-    post '/login', params: { user: @user_admin.name, password: @user_admin.password }
+    post '/login', params: { user: @user_admin.name, password: @user_admin.name }
     assert_redirected_to '/'
     follow_redirect!
+    assert :success
+    assert_equal 'admin', session[:login_user]
 
     puts 'controller test after good login'
     get carts_url
@@ -344,9 +353,11 @@ class SystemTest < ActionDispatch::IntegrationTest
     puts '----------------------------------------------------------------'
 
     puts 'login as an admin'
-    post '/login', params: { user: @user_admin.name, password: @user_admin.password }
+    post '/login', params: { user: @user_admin.name, password: @user_admin.name }
     assert_redirected_to '/'
     follow_redirect!
+    assert :success
+    assert_equal 'admin', session[:login_user]
 
     puts 'controller test after good login'
     get carts_url

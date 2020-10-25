@@ -17,7 +17,7 @@ class LoginController < ApplicationController
   def create
     user = User.where("name like '#{params[:user]}'")
     respond_to do |format|
-      if user.first&.password == params[:password]
+      if user.first&.authenticate(params[:password])
         login_sucessfull user
         format.html { redirect_to root_path, notice: 'User was successfully logged in.' }
       else
