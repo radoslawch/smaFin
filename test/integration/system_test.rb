@@ -207,6 +207,8 @@ class SystemTest < ActionDispatch::IntegrationTest
   end
 
   def create_a_new_user_with_full_permissions_and_login_as_them
+    new_user_name = 'user'
+    new_user_password = 'password'
 
     puts '----------------------------------------------------------------'
     puts 'create_a_new_user_with_full_permissions_and_login_as_them'
@@ -229,7 +231,7 @@ class SystemTest < ActionDispatch::IntegrationTest
 
     puts 'create new user'
     assert_difference('User.count', 1) do
-      post users_url, params: { user: { name: 'user', password: 'password' } }
+      post users_url, params: { user: { name: new_user_name, password: new_user_password } }
     end
     assert_redirected_to user_url(User.last)
     follow_redirect!
@@ -239,7 +241,7 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
 
     puts 'login as a new user (user should be redirected to login as he has no roles)'
-    post '/login', params: { user: 'user', password: 'password' }
+    post '/login', params: { user: new_user_name, password: new_user_password }
     assert_redirected_to '/'
     follow_redirect!
     assert_redirected_to application_no_permissions_path
@@ -250,7 +252,7 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
 
     puts 'login as an admin again'
-    post '/login', params: { user: 'admin', password: 'admin' }
+    post '/login', params: { user: @user_admin.name, password: @user_admin.name }
     assert_redirected_to '/'
     follow_redirect!
 
@@ -270,12 +272,14 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
 
     puts 'login as a new user (user should be able to login now)'
-    post '/login', params: { user: 'user', password: 'password' }
+    post '/login', params: { user: new_user_name, password: new_user_password }
     assert_redirected_to '/'
     follow_redirect!
   end
 
   def create_a_new_user_with_full_controllers_permissions_and_login_as_them
+    new_user_name = 'user2'
+    new_user_password = 'password2'
 
     puts '----------------------------------------------------------------'
     puts 'create_a_new_user_with_full_controllers_permissions_and_login_as_them'
@@ -298,7 +302,7 @@ class SystemTest < ActionDispatch::IntegrationTest
 
     puts 'create new user'
     assert_difference('User.count', 1) do
-      post users_url, params: { user: { name: 'user2', password: 'password2' } }
+      post users_url, params:  { user: { name: new_user_name, password: new_user_password } }
     end
     assert_redirected_to user_url(User.last)
     follow_redirect!
@@ -308,7 +312,7 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
 
     puts 'login as a new user (user should be redirected to login as he has no roles)'
-    post '/login', params: { user: 'user2', password: 'password2' }
+    post '/login', params: { user: new_user_name, password: new_user_password }
     assert_redirected_to '/'
     follow_redirect!
     assert_redirected_to application_no_permissions_path
@@ -319,7 +323,7 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
 
     puts 'login as an admin again'
-    post '/login', params: { user: 'admin', password: 'admin' }
+    post '/login', params: { user: @user_admin.name, password: @user_admin.name }
     assert_redirected_to '/'
     follow_redirect!
 
@@ -341,12 +345,14 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
 
     puts 'login as a new user (user should be able to login now)'
-    post '/login', params: { user: 'user2', password: 'password2' }
+    post '/login', params:  { user: new_user_name, password: new_user_password }
     assert_redirected_to '/'
     follow_redirect!
   end
 
   def create_a_new_user_with_full_action_permissions_and_login_as_them
+    new_user_name = 'user3'
+    new_user_password = 'password3'
 
     puts '----------------------------------------------------------------'
     puts 'create_a_new_user_with_full_action_permissions_and_login_as_them'
@@ -369,7 +375,7 @@ class SystemTest < ActionDispatch::IntegrationTest
 
     puts 'create new user'
     assert_difference('User.count', 1) do
-      post users_url, params: { user: { name: 'user3', password: 'password3' } }
+      post users_url, params: { user: { name: new_user_name, password: new_user_password } }
     end
     assert_redirected_to user_url(User.last)
     follow_redirect!
@@ -379,7 +385,7 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
 
     puts 'login as a new user (user should be redirected to login as he has no roles)'
-    post '/login', params: { user: 'user3', password: 'password3' }
+    post '/login', params: { user: new_user_name, password: new_user_password }
     assert_redirected_to '/'
     follow_redirect!
     assert_redirected_to application_no_permissions_path
@@ -390,7 +396,7 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
 
     puts 'login as an admin again'
-    post '/login', params: { user: 'admin', password: 'admin' }
+    post '/login', params: { user: @user_admin.name, password: @user_admin.name }
     assert_redirected_to '/'
     follow_redirect!
 
@@ -414,7 +420,7 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
 
     puts 'login as a new user (user should be able to login now)'
-    post '/login', params: { user: 'user3', password: 'password3' }
+    post '/login', params: { user: new_user_name, password: new_user_password }
     assert_redirected_to '/'
     follow_redirect!
   end
