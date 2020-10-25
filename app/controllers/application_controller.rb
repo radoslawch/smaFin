@@ -46,10 +46,10 @@ class ApplicationController < ActionController::Base
       # or "*" - permission to everything
 
       roles = Role.where(['user_id=?
-                            AND (name like "?_?"
-                            OR name like "?"
+                            AND (name like ?
+                            OR name like ?
                             OR name like "*")',
-                          session[:login_id].to_s, controller_name.to_s, action_name.to_s, controller_name.to_s])
+                          session[:login_id].to_s, "#{controller_name}_#{action_name}", controller_name])
       return true unless roles&.empty?
     end
 

@@ -1,10 +1,14 @@
 class SystemTest < ActionDispatch::IntegrationTest
   setup do
     @user_admin = users(:user_admin)
-    part_no = 0
   end
 
   def add_stuff
+
+    puts '----------------------------------------------------------------'
+    puts 'create objects'
+    puts '----------------------------------------------------------------'
+
     puts '----'
     puts 'category'
     puts '----'
@@ -197,23 +201,11 @@ class SystemTest < ActionDispatch::IntegrationTest
     follow_redirect!
   end
 
-  test 'should get full test' do
-    sanity_test
+  def create_a_new_user_with_full_permissions_and_login_as_them
 
-    puts '.'
-    puts '.'
-    puts '.'
-    puts 'begin really full fully test'
-    puts '.'
-    puts '.'
-    puts '.'
-
-    puts ''
-    puts '-------------------------------------------------------------------------------------'
-    puts '1. part'
-    puts 'create a new user and try logging in as them'
-    puts '-------------------------------------------------------------------------------------'
-    puts ''
+    puts '----------------------------------------------------------------'
+    puts 'create_a_new_user_with_full_permissions_and_login_as_them'
+    puts '----------------------------------------------------------------'
 
     puts 'login as an admin'
     post '/login', params: { user: @user_admin.name, password: @user_admin.password }
@@ -274,22 +266,153 @@ class SystemTest < ActionDispatch::IntegrationTest
     post '/login', params: { user: 'user', password: 'password' }
     assert_redirected_to '/'
     follow_redirect!
+  end
 
-    puts ''
-    puts '-------------------------------------------------------------------------------------'
-    puts '2. part'
-    puts 'create objects as a new user'
-    puts '-------------------------------------------------------------------------------------'
-    puts ''
+  def create_a_new_user_with_full_controllers_permissions_and_login_as_them
 
-    add_stuff
+    puts '----------------------------------------------------------------'
+    puts 'create_a_new_user_with_full_controllers_permissions_and_login_as_them'
+    puts '----------------------------------------------------------------'
 
-    puts ''
-    puts '-------------------------------------------------------------------------------------'
-    puts '3. part'
+    puts 'login as an admin'
+    post '/login', params: { user: @user_admin.name, password: @user_admin.password }
+    assert_redirected_to '/'
+    follow_redirect!
+
+    puts 'controller test after good login'
+    get carts_url
+    assert :success
+
+    puts 'go to new user page'
+    get new_user_url
+    assert :success
+
+    puts 'create new user'
+    assert_difference('User.count', 1) do
+      post users_url, params: { user: { name: 'user2', password: 'password2' } }
+    end
+    assert_redirected_to user_url(User.last)
+    follow_redirect!
+
+    puts 'logout'
+    get logout_url
+    assert_redirected_to root_path
+
+    puts 'login as a new user (user should be redirected to login as he has no roles)'
+    post '/login', params: { user: 'user2', password: 'password2' }
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_redirected_to application_no_permissions_path
+    follow_redirect!
+
+    puts 'logout'
+    get logout_url
+    assert_redirected_to root_path
+
+    puts 'login as an admin again'
+    post '/login', params: { user: 'admin', password: 'admin' }
+    assert_redirected_to '/'
+    follow_redirect!
+
+    puts 'go to new role page'
+    get new_role_url
+    assert :success
+
+    puts 'create new roles'
+    assert_difference('Role.count', 9) do
+      %w(application carts categories login products purchases roles subcategories users).each do |c|
+        post roles_url, params: { role: { name: c, user_id: User.last.id } }
+      end
+    end
+    assert_redirected_to role_url(Role.last)
+    follow_redirect!
+
+    puts 'logout'
+    get logout_url
+    assert_redirected_to root_path
+
+    puts 'login as a new user (user should be able to login now)'
+    post '/login', params: { user: 'user2', password: 'password2' }
+    assert_redirected_to '/'
+    follow_redirect!
+  end
+
+  def create_a_new_user_with_full_action_permissions_and_login_as_them
+
+    puts '----------------------------------------------------------------'
+    puts 'create_a_new_user_with_full_action_permissions_and_login_as_them'
+    puts '----------------------------------------------------------------'
+
+    puts 'login as an admin'
+    post '/login', params: { user: @user_admin.name, password: @user_admin.password }
+    assert_redirected_to '/'
+    follow_redirect!
+
+    puts 'controller test after good login'
+    get carts_url
+    assert :success
+
+    puts 'go to new user page'
+    get new_user_url
+    assert :success
+
+    puts 'create new user'
+    assert_difference('User.count', 1) do
+      post users_url, params: { user: { name: 'user3', password: 'password3' } }
+    end
+    assert_redirected_to user_url(User.last)
+    follow_redirect!
+
+    puts 'logout'
+    get logout_url
+    assert_redirected_to root_path
+
+    puts 'login as a new user (user should be redirected to login as he has no roles)'
+    post '/login', params: { user: 'user3', password: 'password3' }
+    assert_redirected_to '/'
+    follow_redirect!
+    assert_redirected_to application_no_permissions_path
+    follow_redirect!
+
+    puts 'logout'
+    get logout_url
+    assert_redirected_to root_path
+
+    puts 'login as an admin again'
+    post '/login', params: { user: 'admin', password: 'admin' }
+    assert_redirected_to '/'
+    follow_redirect!
+
+    puts 'go to new role page'
+    get new_role_url
+    assert :success
+
+    puts 'create new roles'
+    assert_difference('Role.count', 81) do
+      %w(application carts categories login products purchases roles subcategories users).each do |c|
+        %w(index show new edit create update destroy hide unhide).each do |a|
+          post roles_url, params: { role: { name: "#{c}_#{a}", user_id: User.last.id } }
+        end
+      end
+    end
+    assert_redirected_to role_url(Role.last)
+    follow_redirect!
+
+    puts 'logout'
+    get logout_url
+    assert_redirected_to root_path
+
+    puts 'login as a new user (user should be able to login now)'
+    post '/login', params: { user: 'user3', password: 'password3' }
+    assert_redirected_to '/'
+    follow_redirect!
+  end
+
+  def delete_all_created_objects
+
+    puts '----------------------------------------------------------------'
     puts 'delete all created objects'
-    puts '-------------------------------------------------------------------------------------'
-    puts ''
+    puts '----------------------------------------------------------------'
 
     puts 'delete the purchase'
     assert_difference('Purchase.count', -1) do
@@ -325,22 +448,13 @@ class SystemTest < ActionDispatch::IntegrationTest
     end
     assert_redirected_to categories_url
     follow_redirect!
+  end
 
-    puts ''
-    puts '-------------------------------------------------------------------------------------'
-    puts '4. part'
-    puts 'create objects once again'
-    puts '-------------------------------------------------------------------------------------'
-    puts ''
+  def delete_only_category_and_cart
 
-    add_stuff
-
-    puts ''
-    puts '-------------------------------------------------------------------------------------'
-    puts '5. part'
+    puts '----------------------------------------------------------------'
     puts 'delete only category and cart'
-    puts '-------------------------------------------------------------------------------------'
-    puts ''
+    puts '----------------------------------------------------------------'
 
     puts 'delete the cart'
     assert_difference('Cart.count', -1) do
@@ -362,22 +476,13 @@ class SystemTest < ActionDispatch::IntegrationTest
     follow_redirect!
     s_cats_before = nil
     s_cats_ids = nil
+  end
 
-    puts ''
-    puts '-------------------------------------------------------------------------------------'
-    puts '6. part'
-    puts 'create objects once-once again'
-    puts '-------------------------------------------------------------------------------------'
-    puts ''
+  def delete_only_category_and_cart_in_reversed_order
 
-    add_stuff
-
-    puts ''
-    puts '-------------------------------------------------------------------------------------'
-    puts '7. part'
+    puts '----------------------------------------------------------------'
     puts 'delete only category and cart in reversed order'
-    puts '-------------------------------------------------------------------------------------'
-    puts ''
+    puts '----------------------------------------------------------------'
 
     puts 'delete the category'
     s_cats_before = Subcategory.where("category_id=#{@category_last.id}")
@@ -404,22 +509,12 @@ class SystemTest < ActionDispatch::IntegrationTest
     end
     assert_redirected_to carts_url
     follow_redirect!
+  end
 
-    puts ''
-    puts '-------------------------------------------------------------------------------------'
-    puts '8. part'
-    puts 'create objects once-once-once again'
-    puts '-------------------------------------------------------------------------------------'
-    puts ''
-
-    add_stuff
-
-    puts ''
-    puts '-------------------------------------------------------------------------------------'
-    puts '9. part'
+  def hide_objects_one_by_one
+    puts '----------------------------------------------------------------'
     puts 'hide objects one by one'
-    puts '-------------------------------------------------------------------------------------'
-    puts ''
+    puts '----------------------------------------------------------------'
 
     puts 'hide the purchase'
     post hide_purchase_url(@purchase_last.id)
@@ -450,13 +545,12 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_equal(true, Category.find(@category_last.id).hidden)
     assert_redirected_to categories_url
     follow_redirect!
+  end
 
-    puts ''
-    puts '-------------------------------------------------------------------------------------'
-    puts '10. part'
+  def unhide_objects_one_by_one
+    puts '----------------------------------------------------------------'
     puts 'unhide objects one by one'
-    puts '-------------------------------------------------------------------------------------'
-    puts ''
+    puts '----------------------------------------------------------------'
 
     puts 'unhide the purchase'
     post unhide_purchase_url(@purchase_last.id)
@@ -487,13 +581,12 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_equal(false, Category.find(@category_last.id).hidden)
     assert_redirected_to categories_url
     follow_redirect!
+  end
 
-    puts ''
-    puts '-------------------------------------------------------------------------------------'
-    puts '11. part'
+  def hide_only_category_and_cart
+    puts '----------------------------------------------------------------'
     puts 'hide only category and cart'
-    puts '-------------------------------------------------------------------------------------'
-    puts ''
+    puts '----------------------------------------------------------------'
 
     puts 'hide the cart'
     post hide_cart_url(@cart_last.id)
@@ -509,13 +602,12 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_equal(0, Product.left_joins(:subcategory).where("category_id=#{@category_last.id} AND products.hidden=0").count)
     assert_redirected_to categories_url
     follow_redirect!
+  end
 
-    puts ''
-    puts '-------------------------------------------------------------------------------------'
-    puts '12. part'
+  def unhide_only_category_and_cart
+    puts '----------------------------------------------------------------'
     puts 'unhide only category and cart'
-    puts '-------------------------------------------------------------------------------------'
-    puts ''
+    puts '----------------------------------------------------------------'
 
     puts 'unhide the category'
     post unhide_category_url(@category_last.id)
@@ -533,13 +625,12 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_equal(0, Purchase.where("cart_id=#{@cart_last.id} AND hidden=0").count)
     assert_redirected_to carts_url
     follow_redirect!
+  end
 
-    puts ''
-    puts '-------------------------------------------------------------------------------------'
-    puts '13. part'
+  def hide_only_category_and_cart_in_reversed_order
+    puts '----------------------------------------------------------------'
     puts 'hide only category and cart in reversed order'
-    puts '-------------------------------------------------------------------------------------'
-    puts ''
+    puts '----------------------------------------------------------------'
 
     puts 'hide the category'
     post hide_category_url(@category_last.id)
@@ -555,13 +646,12 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_equal(true, Cart.find(@cart_last.id).hidden)
     assert_redirected_to carts_url
     follow_redirect!
+  end
 
-    puts ''
-    puts '-------------------------------------------------------------------------------------'
-    puts '14. part'
+  def unhide_only_category_and_cart_in_reversed_order
+    puts '----------------------------------------------------------------'
     puts 'unhide only category and cart in reversed order'
-    puts '-------------------------------------------------------------------------------------'
-    puts ''
+    puts '----------------------------------------------------------------'
 
     puts 'unhide the cart'
     post unhide_cart_url(@cart_last.id)
@@ -578,13 +668,12 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_equal(0, Purchase.left_joins(product: :subcategory).where("category_id=#{@category_last.id} AND purchases.hidden=0").count)
     assert_redirected_to categories_url
     follow_redirect!
+  end
 
-    puts ''
-    puts '-------------------------------------------------------------------------------------'
-    puts '15. part'
+  def hide_only_category_and_cart_once_again
+    puts '----------------------------------------------------------------'
     puts 'hide only category and cart once again'
-    puts '-------------------------------------------------------------------------------------'
-    puts ''
+    puts '----------------------------------------------------------------'
 
     puts 'hide the cart'
     post hide_cart_url(@cart_last.id)
@@ -600,13 +689,12 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_equal(0, Product.left_joins(:subcategory).where("category_id=#{@category_last.id} AND products.hidden=0").count)
     assert_redirected_to categories_url
     follow_redirect!
+  end
 
-    puts ''
-    puts '-------------------------------------------------------------------------------------'
-    puts '16. part'
+  def unhide_only_purchase
+    puts '----------------------------------------------------------------'
     puts 'unhide only purchase'
-    puts '-------------------------------------------------------------------------------------'
-    puts ''
+    puts '----------------------------------------------------------------'
 
     puts 'unhide the purchase'
     post unhide_purchase_url(@purchase_last.id)
@@ -615,5 +703,56 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_equal(false, Product.find(@purchase_last.product_id).hidden)
     assert_equal(false, Subcategory.find(Product.find(@purchase_last.product_id).subcategory_id).hidden)
     assert_equal(false, Category.find(Subcategory.find(Product.find(@purchase_last.product_id).subcategory_id).category_id).hidden)
+  end
+
+  def full_test_for_current_user
+    add_stuff
+
+    delete_all_created_objects
+
+    add_stuff
+
+    delete_only_category_and_cart
+
+    add_stuff
+
+    delete_only_category_and_cart_in_reversed_order
+
+    add_stuff
+
+    hide_objects_one_by_one
+
+    unhide_objects_one_by_one
+
+    hide_only_category_and_cart
+
+    unhide_only_category_and_cart
+
+    hide_only_category_and_cart_in_reversed_order
+
+    unhide_only_category_and_cart_in_reversed_order
+
+    hide_only_category_and_cart_once_again
+
+    unhide_only_purchase
+  end
+
+  test 'should get full test' do
+    sanity_test
+
+    puts 'begin really full fully test'
+
+    create_a_new_user_with_full_permissions_and_login_as_them
+
+    full_test_for_current_user
+
+    create_a_new_user_with_full_controllers_permissions_and_login_as_them
+
+    full_test_for_current_user
+
+    create_a_new_user_with_full_action_permissions_and_login_as_them
+
+    full_test_for_current_user
+
   end
 end
