@@ -13,11 +13,7 @@ class ApplicationController < ActionController::Base
   def toggle_hidden
     cookies[:show_hidden] = (cookies[:show_hidden] == '0' ? '1' : '0')
 
-    if request.env['HTTP_REFERER'].nil?
-      redirect_to root_path
-    else
-      redirect_to(:back)
-    end
+    redirect_back(fallback_location: root_path)
   end
 
   def no_permissions
