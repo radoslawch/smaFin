@@ -2,6 +2,7 @@
 
 # Model for a user.
 class User < ApplicationRecord
+  has_secure_password
   has_many :categories
   has_many :carts
   has_many :roles
