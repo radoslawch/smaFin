@@ -320,7 +320,7 @@ class SystemTest < ActionDispatch::IntegrationTest
 
     puts 'create new roles'
     assert_difference('Role.count', 9) do
-      %w(application carts categories login products purchases roles subcategories users).each do |c|
+      %w[application carts categories login products purchases roles subcategories users].each do |c|
         post roles_url, params: { role: { name: c, user_id: User.last.id } }
       end
     end
@@ -389,8 +389,8 @@ class SystemTest < ActionDispatch::IntegrationTest
 
     puts 'create new roles'
     assert_difference('Role.count', 81) do
-      %w(application carts categories login products purchases roles subcategories users).each do |c|
-        %w(index show new edit create update destroy hide unhide).each do |a|
+      %w[application carts categories login products purchases roles subcategories users].each do |c|
+        %w[index show new edit create update destroy hide unhide].each do |a|
           post roles_url, params: { role: { name: "#{c}_#{a}", user_id: User.last.id } }
         end
       end
