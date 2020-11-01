@@ -223,19 +223,11 @@ DEPENDENCIES
   listen
   loofah
   mysql2
-<<<<<<< HEAD
   nokogiri
   puma
   rack
   rails (>= 5.0.0)
   rails-html-sanitizer
-=======
-  nokogiri (>= 1.8.2)
-  puma (~> 3.12)
-  rack (>= 2.0.6)
-  rails (~> 5.0.0, >= 5.0.0.1)
-  rails-html-sanitizer (>= 1.0.4)
->>>>>>> 0b72797c8349106e1a867490b6eb085c6785afa9
   rails4-autocomplete
   sass-rails
   spring
