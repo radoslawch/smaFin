@@ -20,7 +20,7 @@
       <td><%= purchase.product.unit %></td>
 
       <td><%= link_to "Show", purchase_path(purchase) %></td>
-      <td><%= link_to "Edit", edit_purchase_path(purchase) %></td>
+      <td><%= link_to "Edit", edit_purchase_path(purchase, :redirect_to_cart => @cart.present?.to_s) %></td>
       
       <% if purchase.hidden %>
       <td><%= link_to "Unhide", unhide_purchase_path(purchase),

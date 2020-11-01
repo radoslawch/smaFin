@@ -90,7 +90,11 @@ class PurchasesController < ApplicationController
     if @purchase.update(purchase_params)
       # update sucessfull
       # redirect to cart the purchase belongs to
-      redirect_to @purchase.cart
+      if params[:redirect_to_cart] == 'true'
+        redirect_to @purchase.cart
+      else
+        redirect_to purchases_path
+      end
     else
       render 'edit'
     end
@@ -133,6 +137,6 @@ class PurchasesController < ApplicationController
   private
 
   def purchase_params
-    params.require(:purchase).permit(:cart_id, :product_id, :amount, :price, :name)
+    params.require(:purchase).permit(:cart_id, :product_id, :amount, :price, :name, :redirect_to_cart)
   end
 end
