@@ -123,17 +123,11 @@
       }else{
         subcategory_options[i].hidden=true;
       }
-      <% if @purchase.product %>
-        if(<%= @purchase.product.subcategory_id %> == subcategory_options[i].value && fullRefresh){
-          subcategory_options[selected_index].selected = false;
-          subcategory_options[i].selected = true;
-        }
-      <% end %>
     }
     refresh_products(fullRefresh);
   }
 
-  function refresh_products(fullRefresh){
+  function refresh_products(fullRefresh = true){
     var subcategory_id = document.getElementById("subcategory_id").value;
     var product_options = document.getElementById("purchase_product_id").options;
     var already_selected = false;
@@ -151,13 +145,6 @@
       }else{
         product_options[i].hidden=true;
       }
-  <% if @purchase.product %>
-      if(<%= @purchase.product.subcategory_id %> == product_options[i].value && fullRefresh){
-        is_current_subcategory_visible = true;
-        product_options[i].selected = true;
-        product_options[selected_index].selected = false;
-      }
-  <% end %>
     }
     if(fullRefresh){
       refresh_product();
