@@ -17,45 +17,70 @@
     </div>
   <% end %>
 
-
-<% if @cart.nil? %>
-<!-- add product to chosen cart -->
-  <p>
-    <%= f.label :cart %><br>
-    <%= f.select(:cart_id, options_from_collection_for_select(@carts, "id", "name",  @purchase.cart_id)) %>
-  </p>
-<% else %>
-<!-- add product to known cart -->
+  <% if @cart.nil? %>
+    <!-- add product to chosen cart -->
+    <p>
+      <%= f.label :cart %><br>
+      <%= f.select(:cart_id, options_from_collection_for_select(@carts, "id", "name",  @purchase.cart_id)) %>
+    </p>
+  <% else %>
+    <!-- add product to known cart -->
     <%= f.hidden_field :cart_id, :value => @cart.id %>
-<% end %>
-
-
+  <% end %>
 
   <p>
     <%= f.label :product %>
-    <!-- if we have a purchase (so it has a product) -->
-    <% if !@purchase.product.nil? %>
-    <%= select_tag(:category_id, options_from_collection_for_select(@categories, "id", "name", @purchase.product.subcategory.category_id), onchange: "refresh_subcategories();") %>
-    <%= select_tag(:subcategory_id, options_from_collection_for_select_with_data(@subcategories, "id", "name",  @purchase.product.subcategory_id, {"category_id" => :category_id}), onchange: "refresh_products();") %>
-    <%= f.select(:product_id, options_from_collection_for_select_with_data(@products, "id", "name",  @purchase.product.id, {"subcategory_id" => :subcategory_id})) %>
-    <!-- if it's a new purchase -->
-    <% else %>
-    <%= select_tag(:category_id, options_from_collection_for_select(@categories, "id", "name", nil), onchange: "refresh_subcategories();") %>
-    <%= select_tag(:subcategory_id, options_from_collection_for_select_with_data(@subcategories, "id", "name",  nil,  {"category_id" => :category_id}), onchange: "refresh_products();") %>
-    <%= f.select(:product_id, options_from_collection_for_select_with_data(@products, "id", "name",  nil, {"subcategory_id" => :subcategory_id})) %>
-    <% end %>
 
+    Choose the product from the list <br />      
+    <%= select_tag(
+      :category_id,
+      options_from_collection_for_select(
+        @categories,
+        "id",
+        "name",
+        @purchase.product.nil? ? nil : @purchase.product.subcategory.category_id),
+      onchange: "refresh_subcategories();") %>
 
-    <%= text_field_tag(:product_id_datalist_input, value = nil, list: "product_id_datalist", onblur: "product_id_from_datalist(this);") %>
-      <datalist id="product_id_datalist">
-    <% @products.all.each do |product| %>
-      <option value="<%= product.id %>" data-category_id="<%= product.subcategory.category.id %>" data-subcategory_id="<%= product.subcategory.id %>" ><%= product.name %> < <%= product.subcategory.name %> < <%= product.subcategory.category.name %></option>
-    <% end %>
-      </datalist>
+    <%= select_tag(
+      :subcategory_id,
+      options_from_collection_for_select_with_data(
+        @subcategories,
+        "id",
+        "name",
+        @purchase.product.nil? ? nil : @purchase.product.subcategory_id,
+        {"category_id" => :category_id}),
+      onchange: "refresh_products();") %>
+
+    <%= f.select(
+      :product_id,
+      options_from_collection_for_select_with_data(
+        @products,
+        "id",
+        "name",
+        @purchase.product.nil? ? nil : @purchase.product.id,
+        {"subcategory_id" => :subcategory_id})
+      ) %>
+    <br />
+
+    or find it here <br />
+
+    <%= text_field_tag(
+      :product_id_datalist_input,
+      value = nil,
+      list: "product_id_datalist",
+      oninput: "product_id_from_datalist(this);") %>
+
+    <datalist id="product_id_datalist">
+      <% @products.all.each do |product| %>
+        <option
+          value="<%= product.id %>"
+          data-category_id="<%= product.subcategory.category.id %>"
+          data-subcategory_id="<%= product.subcategory.id %>" >
+          <%= product.name %> < <%= product.subcategory.name %> < <%= product.subcategory.category.name %>
+        </option>
+      <% end %>
+    </datalist>
   </p>
-
-    
-
 
   <p>
     <%= f.label :purchase_name %>
@@ -76,99 +101,100 @@
     <%= hidden_field_tag :redirect_to_cart, params[:redirect_to_cart] %>
     <%= f.submit :add %>
   </p>
-
- 
 <% end %>
-
-
 
 <script>
-function refresh_subcategories(fullRefresh = true){
-  //full refresh mean both hiding/showing proper options and changing selected values
-  //simple refresh only hides/shows proper options
-  var category_id = document.getElementById("category_id").value;
-  var subcategory_options = document.getElementById("subcategory_id").options;
-  var already_selected = false;
-  var selected_index = 0;
-  
+  function refresh_subcategories(fullRefresh = true){
+    //full refresh mean both hiding/showing proper options and changing selected values
+    //simple refresh only hides/shows proper options
+    var category_id = document.getElementById("category_id").value;
+    var subcategory_options = document.getElementById("subcategory_id").options;
+    var already_selected = false;
+    var selected_index = 0;
 
-  for(i=0; i < subcategory_options.length ; i++){
-    if(subcategory_options[i].dataset.category_id == category_id){
-      subcategory_options[i].hidden=false;
-      if(!already_selected && fullRefresh){
-        subcategory_options[i].selected = true;
-        selected_index = i;
-        already_selected = true;
+    for(i=0; i < subcategory_options.length ; i++){
+      if(subcategory_options[i].dataset.category_id == category_id){
+        subcategory_options[i].hidden=false;
+        if(!already_selected && fullRefresh){
+          subcategory_options[i].selected = true;
+          selected_index = i;
+          already_selected = true;
+        }
+      }else{
+        subcategory_options[i].hidden=true;
       }
-    }else{
-      subcategory_options[i].hidden=true;
+      <% if @purchase.product %>
+        if(<%= @purchase.product.subcategory_id %> == subcategory_options[i].value && fullRefresh){
+          subcategory_options[selected_index].selected = false;
+          subcategory_options[i].selected = true;
+        }
+      <% end %>
     }
-<% if @purchase.product %>
-    if(<%= @purchase.product.subcategory_id %> == subcategory_options[i].value && fullRefresh){
-      subcategory_options[selected_index].selected = false;
-      subcategory_options[i].selected = true;
-    }
-<% end %>
+    refresh_products(fullRefresh);
   }
-  refresh_products(fullRefresh);
-}
 
-function refresh_products(fullRefresh){
-  var subcategory_id = document.getElementById("subcategory_id").value;
-  var product_options = document.getElementById("purchase_product_id").options;
-  var already_selected = false;
-  var selected_index = 0;
-  for(i=0; i < product_options.length ; i++){
-    if(product_options[i].dataset.subcategory_id == subcategory_id){
-      product_options[i].hidden=false;
-      if(!already_selected && fullRefresh){
+  function refresh_products(fullRefresh){
+    var subcategory_id = document.getElementById("subcategory_id").value;
+    var product_options = document.getElementById("purchase_product_id").options;
+    var already_selected = false;
+    var selected_index = 0;
+    for(i=0; i < product_options.length ; i++){
+      if(product_options[i].dataset.subcategory_id == subcategory_id){
+        product_options[i].hidden=false;
+        if(!already_selected && fullRefresh){
+          product_options[i].selected = true;
+        }
+        if(fullRefresh){
+          already_selected = true;
+          selected_index = i;
+        }
+      }else{
+        product_options[i].hidden=true;
+      }
+  <% if @purchase.product %>
+      if(<%= @purchase.product.subcategory_id %> == product_options[i].value && fullRefresh){
+        is_current_subcategory_visible = true;
         product_options[i].selected = true;
+        product_options[selected_index].selected = false;
       }
-      if(fullRefresh){
-        already_selected = true;
-        selected_index = i;
-      }
+  <% end %>
+    }
+    if(fullRefresh){
+      refresh_product();
+    }
+  }
+  
+  //some silly way to make an autocomplete list
+  //it works on blur: start writing, chose an option and tab/click on another field
+  function product_id_from_datalist(sel){
+    let product = document.getElementById("purchase_product_id");
+    let subcategory = document.getElementById("subcategory_id");
+    let category = document.getElementById("category_id");
+    let product_id_datalist_input = document.getElementById("product_id_datalist_input");
+    //datalist puts product id in the field so
+    //change select value accordingly
+    product.value = sel.value;
+    if (product.selectedIndex < 0){
+      sel.style.background="#FF7777";
     }else{
-      product_options[i].hidden=true;
+      sel.style.background="";
+      //update subcategory selected option
+      subcategory.value = product.options[product.selectedIndex].dataset.subcategory_id;  
+      //update category selected option
+      category.value = subcategory.options[subcategory.selectedIndex].dataset.category_id; 
+      //hide/show proper select options
+      refresh_subcategories(false);
+      //change datalist field to show name instead of id
+      refresh_product();
     }
-<% if @purchase.product %>
-    if(<%= @purchase.product.subcategory_id %> == product_options[i].value && fullRefresh){
-      is_current_subcategory_visible = true;
-      product_options[i].selected = true;
-      product_options[selected_index].selected = false;
-    }
-<% end %>
   }
-  if(fullRefresh){
-    refresh_product();
-  }
-}
-//some silly way to make an autocomplete list
-//it works on blur: start writing, chose an option and tab/click on another field
-function product_id_from_datalist(sel){
-  let product = document.getElementById("purchase_product_id");
-  let subcategory = document.getElementById("subcategory_id");
-  let category = document.getElementById("category_id");
-  let product_id_datalist_input = document.getElementById("product_id_datalist_input");
-  //datalist puts product id in the field so
-  //change select value accordingly
-  product.value = sel.value;
-  //update subcategory selected option
-  subcategory.value = product.options[product.selectedIndex].dataset.subcategory_id;  
-  //update category selected option
-  category.value = subcategory.options[subcategory.selectedIndex].dataset.category_id; 
-  //hide/show proper select options
-  refresh_subcategories(false);
-  //change datalist field to show name instead of id
-  refresh_product();
-}
 
-function refresh_product(){
-  let product = document.getElementById("purchase_product_id");
-  document.getElementById("product_id_datalist_input").value = product.options[product.selectedIndex].innerText;
-}
-document.getElementById("purchase_product_id").onchange = refresh_product;
-refresh_subcategories();
-refresh_products();
-refresh_product()
+  function refresh_product(){
+    let product = document.getElementById("purchase_product_id");
+    document.getElementById("product_id_datalist_input").value = product.options[product.selectedIndex].innerText;
+  }
+  document.getElementById("purchase_product_id").onchange = refresh_product;
+  refresh_subcategories();
+  refresh_products();
+  refresh_product()
 </script>
