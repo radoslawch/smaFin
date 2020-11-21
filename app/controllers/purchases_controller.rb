@@ -24,11 +24,8 @@ class PurchasesController < ApplicationController
     return unless check_permission
 
     @purchase = Purchase.new
-    @carts =  Cart.where("user_id=#{session[:login_id]}")
-    @products = Product.left_joins(subcategory: :category).where("user_id=#{session[:login_id]}")
 
-    @subcategories = Subcategory.left_joins(:category).where("user_id=#{session[:login_id]}")
-    @categories = Category.where("user_id=#{session[:login_id]}")
+    read_users_products
 
     notice_string = ''
     notice_string += 'Add a cart first! ' if @carts.empty?
@@ -44,11 +41,7 @@ class PurchasesController < ApplicationController
     @purchase = Purchase.find(params[:id])
     @purchase.current_user_id = session[:login_id]
 
-    @carts =  Cart.where("user_id=#{session[:login_id]}")
-    @products = Product.left_joins(subcategory: :category).where("user_id=#{session[:login_id]}")
-
-    @subcategories = Subcategory.left_joins(:category).where("user_id=#{session[:login_id]}")
-    @categories = Category.where("user_id=#{session[:login_id]}")
+    read_users_products
 
     redirect_to  purchases_path, notice: 'error, purchase does not exist' unless @purchase
 
@@ -62,11 +55,7 @@ class PurchasesController < ApplicationController
     @purchase = Purchase.new(purchase_params)
     @purchase.current_user_id = session[:login_id]
 
-    @carts =  Cart.where("user_id=#{session[:login_id]}")
-    @products = Product.left_joins(subcategory: :category).where("user_id=#{session[:login_id]}")
-
-    @subcategories = Subcategory.left_joins(:category).where("user_id=#{session[:login_id]}")
-    @categories = Category.where("user_id=#{session[:login_id]}")
+    read_users_products
 
     if @purchase.save
       redirect_to @purchase.cart
@@ -82,11 +71,8 @@ class PurchasesController < ApplicationController
     @purchase = Purchase.find(params[:id])
     @purchase.current_user_id = session[:login_id]
 
-    @carts =  Cart.where("user_id=#{session[:login_id]}")
-    @products = Product.left_joins(subcategory: :category).where("user_id=#{session[:login_id]}")
+    read_users_products
 
-    @subcategories = Subcategory.left_joins(:category).where("user_id=#{session[:login_id]}")
-    @categories = Category.where("user_id=#{session[:login_id]}")
     if @purchase.update(purchase_params)
       # update sucessfull
       # redirect to cart the purchase belongs to
@@ -135,6 +121,14 @@ class PurchasesController < ApplicationController
   end
 
   private
+
+  def read_users_products
+    @carts =  Cart.where("user_id=#{session[:login_id]}")
+    @products = Product.left_joins(subcategory: :category).where("user_id=#{session[:login_id]}")
+
+    @subcategories = Subcategory.where(['id IN (?)', @products.pluck(:subcategory_id)])
+    @categories = Category.where(['id IN (?)', @products.pluck(:category_id)])
+  end
 
   def purchase_params
     params.require(:purchase).permit(:cart_id, :product_id, :amount, :price, :name, :redirect_to_cart)
