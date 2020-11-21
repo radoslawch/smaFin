@@ -68,7 +68,8 @@
       :product_id_datalist_input,
       value = nil,
       list: "product_id_datalist",
-      oninput: "product_id_from_datalist(this);") %>
+      oninput: "product_id_from_datalist(this);",
+      autocomplete: "off") %>
 
     <datalist id="product_id_datalist">
       <% @products.all.each do |product| %>
