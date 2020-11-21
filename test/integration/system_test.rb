@@ -173,7 +173,7 @@ class SystemTest < ActionDispatch::IntegrationTest
 
     puts 'edit the purchase'
     patch purchase_url(@purchase_last), params: { purchase: { name: 'purchase1_edited' } }
-    assert_redirected_to cart_url(@purchase_last.cart)
+    assert_redirected_to purchase_url(@purchase_last)
     follow_redirect!
   end
 
@@ -491,8 +491,6 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_equal(0, Product.where("subcategory_id IN #{s_cats_ids}").count)
     assert_redirected_to categories_url
     follow_redirect!
-    s_cats_before = nil
-    s_cats_ids = nil
   end
 
   def delete_only_category_and_cart_in_reversed_order
@@ -515,10 +513,6 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_equal(0, Purchase.where("product_id IN #{prods_before_ids}").count)
     assert_redirected_to categories_url
     follow_redirect!
-    s_cats_before = nil
-    s_cats_ids = nil
-    prods_before = nil
-    prods_before_ids = nil
 
     puts 'delete the cart'
     assert_difference('Cart.count', -1) do
