@@ -11,8 +11,7 @@ class PurchasesController < ApplicationController
   def show
     return unless check_permission
 
-    @purchase = Purchase.find(params[:id])
-    @purchase.current_user_id = session[:login_id]
+    purchase_from_params
 
     redirect_to purchases_path, notice: 'error, purchase does not exist' unless @purchase
 
@@ -23,7 +22,7 @@ class PurchasesController < ApplicationController
   def new
     return unless check_permission
 
-    @purchase = Purchase.new
+    purchase_from_params
 
     read_users_products
 
@@ -38,8 +37,7 @@ class PurchasesController < ApplicationController
   def edit
     return unless check_permission
 
-    @purchase = Purchase.find(params[:id])
-    @purchase.current_user_id = session[:login_id]
+    purchase_from_params
 
     read_users_products
 
@@ -52,8 +50,7 @@ class PurchasesController < ApplicationController
   def create
     return unless check_permission
 
-    @purchase = Purchase.new(purchase_params)
-    @purchase.current_user_id = session[:login_id]
+    purchase_from_params
 
     read_users_products
 
@@ -68,19 +65,14 @@ class PurchasesController < ApplicationController
   def update
     return unless check_permission
 
-    @purchase = Purchase.find(params[:id])
-    @purchase.current_user_id = session[:login_id]
+    purchase_from_params
 
     read_users_products
 
     if @purchase.update(purchase_params)
-      # update sucessfull
-      # redirect to cart the purchase belongs to
-      if params[:redirect_to_cart] == 'true'
-        redirect_to @purchase.cart
-      else
-        redirect_to purchases_path
-      end
+      redirection_target = purchases_path
+      redirection_target = @purchase.cart if params[:redirect_to_cart] == 'true'
+      redirect_to redirection_target
     else
       render 'edit'
     end
@@ -128,6 +120,18 @@ class PurchasesController < ApplicationController
 
     @subcategories = Subcategory.where(['id IN (?)', @products.pluck(:subcategory_id)])
     @categories = Category.where(['id IN (?)', @products.pluck(:category_id)])
+  end
+
+  def purchase_from_params
+    @purchase =
+      if params[:id]
+        Purchase.find(params[:id])
+      elsif params[:purchase]
+        Purchase.new(purchase_params)
+      else
+        Purchase.new
+      end
+    @purchase.current_user_id = session[:login_id]
   end
 
   def purchase_params
