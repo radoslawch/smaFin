@@ -41,10 +41,10 @@ class PurchasesController < ApplicationController
 
     read_users_products
 
-    redirect_to  purchases_path, notice: 'error, purchase does not exist' unless @purchase
+    redirect_to purchases_path, notice: 'error, purchase does not exist' unless @purchase
 
     # workaround for no auto-validation on this action
-    redirect_to  purchases_path, notice: @purchase.errors.full_messages.join(', ') unless @purchase.valid?
+    redirect_to purchases_path, notice: @purchase.errors.full_messages.join(', ') unless @purchase.valid?
   end
 
   def create
@@ -83,7 +83,6 @@ class PurchasesController < ApplicationController
 
     @purchase = Purchase.find(params[:id])
     @purchase.destroy_cascade(session[:login_id])
-    # @purchase.destroy
 
     redirect_to purchases_path
   end
@@ -93,10 +92,8 @@ class PurchasesController < ApplicationController
 
     @purchase = Purchase.find(params[:id])
 
-    # method from a model
     @purchase.hide(session[:login_id])
 
-    # redirect_to subcategories_path
     redirect_to @purchase.cart
   end
 
@@ -105,17 +102,15 @@ class PurchasesController < ApplicationController
 
     @purchase = Purchase.find(params[:id])
 
-    # method from a model
     @purchase.unhide(session[:login_id])
 
-    # redirect_to subcategories_path
     redirect_to @purchase.cart
   end
 
   private
 
   def read_users_products
-    @carts =  Cart.where("user_id=#{session[:login_id]}")
+    @carts = Cart.where("user_id=#{session[:login_id]}")
     @products = Product.left_joins(subcategory: :category).where("user_id=#{session[:login_id]}")
 
     @subcategories = Subcategory.where(['id IN (?)', @products.pluck(:subcategory_id)])
