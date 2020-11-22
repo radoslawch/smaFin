@@ -173,7 +173,7 @@ class SystemTest < ActionDispatch::IntegrationTest
 
     puts 'edit the purchase'
     patch purchase_url(@purchase_last), params: { purchase: { name: 'purchase1_edited' } }
-    assert_redirected_to purchase_url(@purchase_last)
+    assert_redirected_to purchases_path
     follow_redirect!
   end
 
