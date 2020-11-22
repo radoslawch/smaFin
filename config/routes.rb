@@ -3,38 +3,38 @@ Rails.application.routes.draw do
 
   match 'application/no_permissions' => 'application#no_permissions', via: [:get]
   resources :carts
-  'carts#index'
+  # 'carts#index'
   match 'carts/:id/hide' => 'carts#hide', :as => 'hide_cart', via: [:post]
   match 'carts/:id/unhide' => 'carts#unhide', :as => 'unhide_cart', via: [:post]
 
   resources :categories
-  'categories#index'
+  # 'categories#index'
   match 'categories/:id/hide' => 'categories#hide', :as => 'hide_category', via: [:post]
   match 'categories/:id/unhide' => 'categories#unhide', :as => 'unhide_category', via: [:post]
 
   resources :subcategories
-  'subcategories#index'
+  # 'subcategories#index'
   match 'subcategories/:id/hide' => 'subcategories#hide', :as => 'hide_subcategory', via: [:post]
   match 'subcategories/:id/unhide' => 'subcategories#unhide', :as => 'unhide_subcategory', via: [:post]
 
   resources :products
-  'products#index'
+  # 'products#index'
   match 'products/:id/hide' => 'products#hide', :as => 'hide_product', via: [:post]
   match 'products/:id/unhide' => 'products#unhide', :as => 'unhide_product', via: [:post]
 
   resources :purchases
-  'purchases#index'
+  # 'purchases#index'
   match 'purchases/:id/hide' => 'purchases#hide', :as => 'hide_purchase', via: [:post]
   match 'purchases/:id/unhide' => 'purchases#unhide', :as => 'unhide_purchase', via: [:post]
 
   resources :users
-  'users#index'
+  # 'users#index'
 
   resources :roles
-  'roles#index'
+  # 'roles#index'
 
   resources :login
-  'login#index'
+  # 'login#index'
 
   root 'application#index' # 'carts#index'
 
