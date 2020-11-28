@@ -37,14 +37,6 @@ class Category < ApplicationRecord
   # a method for CategoriesController for cascade unhide
   def unhide(current_user_id)
     self.current_user_id = current_user_id
-    # bad logic: unhiding a category shouldn't unhide anything
-    # subcategories = Subcategory.where("category_id = " + self.id.to_s)
-    # if subcategories.length > 0
-    # for subcategory in subcategories do
-    # subcategory.unhide(current_user_id)
-    # end
-    # end
-
     self.hidden = false
     save
   end

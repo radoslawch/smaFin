@@ -40,15 +40,7 @@ class Product < ApplicationRecord
   # a method for SubategoriesController for cascade unhide
   def unhide(current_user_id)
     self.current_user_id = current_user_id
-    # bad logic: unhiding product should unhide subcategory
-    # purchases = Purchase.where("product_id = " + self.id.to_s)
-    # if purchases.length > 0
-    # for purchase in purchases do
-    # purchase.unhide(current_user_id)
-    # end
-    # end
     Subcategory.find(subcategory_id).unhide(current_user_id)
-
     self.hidden = false
     save
   end
