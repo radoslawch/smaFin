@@ -1,15 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  id: 1
-  name: MyString
+  name: one
   hidden: false
   subcategory: one
   unit: MyString
 
 two:
-  id: 2
-  name: MyString
+  name: two
   hidden: false
   subcategory: two
   unit: MyString
