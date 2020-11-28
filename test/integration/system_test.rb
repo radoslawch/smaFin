@@ -13,12 +13,23 @@ class SystemTest < ActionDispatch::IntegrationTest
     puts 'category'
     puts '----'
 
+    puts 'go to new product when there\'s no category'
+    get new_product_path
+    assert_redirected_to products_path
+    follow_redirect!
+
     puts "go to categories' list"
     get categories_path
     assert :success
 
     puts 'go to new category'
     get new_category_path
+    assert :success
+
+    puts 'create new category badly'
+    assert_difference('Category.count', 0) do
+      post categories_path, params: { category: { name: nil } }
+    end
     assert :success
 
     puts 'create new category'
@@ -48,8 +59,24 @@ class SystemTest < ActionDispatch::IntegrationTest
     puts 'subcategory'
     puts '----'
 
+    puts 'remove auto-made subcategory'
+    assert_difference('Subcategory.count', -1) do
+      Subcategory.where(category_id: @category_last.id).destroy_all
+    end
+
+    puts 'go to new product when there\'s no subcategory'
+    get new_product_path
+    assert_redirected_to products_path
+    follow_redirect!
+
     puts 'go to new subcategory'
     get new_subcategory_path
+    assert :success
+
+    puts 'create new subcategory badly'
+    assert_difference('Subcategory.count', 0) do
+      post subcategories_path, params: { subcategory: { name: nil } }
+    end
     assert :success
 
     puts 'create new subcategory'
@@ -85,6 +112,12 @@ class SystemTest < ActionDispatch::IntegrationTest
     get new_product_path
     assert :success
 
+    puts 'create new product badly'
+    assert_difference('Product.count', 0) do
+      post products_path, params: { product: { name: nil } }
+    end
+    assert :success
+
     puts 'create new product'
     assert_difference('Product.count', 1) do
       post products_path, params: { product: { name: 'products1', subcategory_id: @subcategory_last.id } }
@@ -118,6 +151,12 @@ class SystemTest < ActionDispatch::IntegrationTest
     get new_cart_path
     assert :success
 
+    puts 'create new cart badly'
+    assert_difference('Cart.count', 0) do
+      post carts_path, params: { cart: { name: nil } }
+    end
+    assert :success
+
     puts 'create new cart'
     assert_difference('Cart.count', 1) do
       post carts_path, params: { cart: { name: 'cart1' } }
@@ -147,6 +186,12 @@ class SystemTest < ActionDispatch::IntegrationTest
     get new_purchase_path
     assert :success
 
+    puts 'create new purchase badly'
+    assert_difference('Purchase.count', 0) do
+      post purchases_path, params: { purchase: { name: nil } }
+    end
+    assert :success
+
     puts 'create new purchase'
     assert_difference('Purchase.count', 1) do
       post purchases_path, params: { purchase: { name: 'purchase1', cart_id: @cart_last.id, product_id: @product_last.id, amount: 1, price: 2 } }
@@ -154,6 +199,10 @@ class SystemTest < ActionDispatch::IntegrationTest
     @purchase_last = Purchase.last
     assert_redirected_to cart_url(@purchase_last.cart)
     follow_redirect!
+
+    puts 'show the new purchase'
+    get "/purchases/#{@purchase_last.id}"
+    assert :success
 
     puts 'go to purchase edit'
     get edit_purchase_path(@purchase_last)
@@ -277,6 +326,129 @@ class SystemTest < ActionDispatch::IntegrationTest
     follow_redirect!
   end
 
+  def create_update_and_remove_new_user
+    new_user_name = 'dummy-user'
+    new_user_password = 'dummy-password'
+
+    puts '----------------------------------------------------------------'
+    puts 'create_update_and_remove_new_user'
+    puts '----------------------------------------------------------------'
+
+    puts 'login as an admin'
+    post '/login', params: { user: @user_admin.name, password: @user_admin.name }
+    assert_redirected_to '/'
+    follow_redirect!
+    assert :success
+    assert_equal 'admin', session[:login_user]
+
+    puts 'go to login page'
+    get '/login'
+    assert_redirected_to root_path
+    follow_redirect!
+
+    puts 'go to users page'
+    get users_path
+    assert :success
+
+    puts 'go to new user page'
+    get new_user_url
+    assert :success
+
+    puts 'create new user badly'
+    assert_difference('User.count', 0) do
+      post users_url, params: { user: { name: nil, password: nil } }
+    end
+    assert :success
+
+    puts 'create new user'
+    assert_difference('User.count', 1) do
+      post users_url, params: { user: { name: new_user_name, password: new_user_password } }
+    end
+    assert_redirected_to user_url(User.last)
+    follow_redirect!
+
+    puts 'go to user edit'
+    get edit_user_path(User.last)
+    assert :success
+
+    puts 'edit the user badly'
+    patch user_url(User.last), params: { user: { name: '' } }
+    assert :success
+
+    puts 'edit the user'
+    patch user_url(User.last), params: { user: { name: 'dummy-user_edited' } }
+    assert_redirected_to user_url(User.last)
+    follow_redirect!
+
+    puts 'go to user edit'
+    get edit_user_path(User.last)
+    assert :success
+
+    puts 'edit the user'
+    patch user_url(User.last), params: { user: { name: 'dummy-user' } }
+    assert_redirected_to user_url(User.last)
+    follow_redirect!
+
+    puts 'go to roles page'
+    get roles_path
+    assert :success
+
+    puts 'go to new role page'
+    get new_role_url
+    assert :success
+
+    puts 'create new role badly'
+    assert_difference('Role.count', 0) do
+      post roles_url, params: { role: { name: nil } }
+    end
+    assert :success
+
+    puts 'create new role'
+    assert_difference('Role.count', 1) do
+      %w[*].each do |c|
+        post roles_url, params: { role: { name: c, user_id: User.last.id } }
+      end
+    end
+    assert_redirected_to role_url(Role.last)
+    follow_redirect!
+
+    puts 'go to role edit'
+    get edit_role_path(Role.last)
+    assert :success
+
+    puts 'edit the role badly'
+    patch role_url(Role.last), params: { role: { name: nil } }
+    assert :success
+
+    puts 'edit the role'
+    patch role_url(Role.last), params: { role: { name: 'empty' } }
+    assert_redirected_to role_url(Role.last)
+    follow_redirect!
+
+    puts 'go to role edit'
+    get edit_role_path(Role.last)
+    assert :success
+
+    puts 'edit the role'
+    patch role_url(Role.last), params: { user: { name: '*' } }
+    assert_redirected_to role_url(Role.last)
+    follow_redirect!
+
+    puts 'destroy the role'
+    delete role_url(Role.last)
+    assert_redirected_to roles_url
+    follow_redirect!
+
+    puts 'destroy the user'
+    delete user_url(User.last)
+    assert_redirected_to users_url
+    follow_redirect!
+
+    puts 'logout'
+    get logout_url
+    assert_redirected_to root_path
+  end
+
   def create_a_new_user_with_full_controllers_permissions_and_login_as_them
     new_user_name = 'user2'
     new_user_password = 'password2'
@@ -350,9 +522,9 @@ class SystemTest < ActionDispatch::IntegrationTest
     follow_redirect!
   end
 
-  def create_a_new_user_with_full_action_permissions_and_login_as_them
-    new_user_name = 'user3'
-    new_user_password = 'password3'
+  def create_a_new_user_with_full_action_permissions_and_login_as_them user_no
+    new_user_name = "user#{user_no}"
+    new_user_password = "password#{user_no}"
 
     puts '----------------------------------------------------------------'
     puts 'create_a_new_user_with_full_action_permissions_and_login_as_them'
@@ -716,6 +888,19 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_equal(false, Category.find(Subcategory.find(Product.find(@purchase_last.product_id).subcategory_id).category_id).hidden)
   end
 
+  def toggle_hidden
+    puts '----------------------------------------------------------------'
+    puts 'toggle hidden'
+    puts '----------------------------------------------------------------'
+
+    2.times { 
+      get '/application/toggle_hidden'
+      # redirect to root_path as there's no referer yet
+      assert_redirected_to root_path
+      follow_redirect!
+    }
+  end
+
   def full_test_for_current_user
     add_stuff
 
@@ -746,12 +931,16 @@ class SystemTest < ActionDispatch::IntegrationTest
     hide_only_category_and_cart_once_again
 
     unhide_only_purchase
+
+    toggle_hidden
   end
 
   test 'should get full test' do
     sanity_test
 
     puts 'begin really full fully test'
+
+    create_update_and_remove_new_user
 
     create_a_new_user_with_full_permissions_and_login_as_them
 
@@ -761,9 +950,11 @@ class SystemTest < ActionDispatch::IntegrationTest
 
     full_test_for_current_user
 
-    create_a_new_user_with_full_action_permissions_and_login_as_them
+    create_a_new_user_with_full_action_permissions_and_login_as_them 3
 
     full_test_for_current_user
+
+    create_a_new_user_with_full_action_permissions_and_login_as_them 4
 
   end
 end

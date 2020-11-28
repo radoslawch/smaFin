@@ -57,7 +57,6 @@ class PurchasesController < ApplicationController
     if @purchase.save
       redirect_to @purchase.cart
     else
-      puts @purchase.errors.inspect
       render 'new'
     end
   end

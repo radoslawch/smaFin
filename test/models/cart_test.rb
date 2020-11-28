@@ -5,7 +5,7 @@ require 'test_helper'
 # model tests for cart
 class CartTest < ActiveSupport::TestCase
   setup do
-    @u_id = User.first.id
+    @u_id = users(:one).id
   end
 
   test 'the truth' do

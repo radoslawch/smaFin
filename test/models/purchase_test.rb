@@ -101,4 +101,10 @@ class PurchaseTest < ActiveSupport::TestCase
     p.cart_id = carts(:one_2).id
     assert p.valid?
   end
+
+  test 'should not create purchase in another user\' cart' do
+    p = good_product
+    p.cart_id = carts(:two).id
+    assert p.invalid?
+  end
 end
