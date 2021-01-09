@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_25_130929) do
+ActiveRecord::Schema.define(version: 2021_01_09_191820) do
 
   create_table "carts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name"
@@ -55,10 +55,11 @@ ActiveRecord::Schema.define(version: 2020_10_25_130929) do
   end
 
   create_table "roles", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "name"
+    t.string "controller_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
+    t.string "action_name", default: "", null: false
     t.index ["user_id"], name: "index_roles_on_user_id"
   end
 

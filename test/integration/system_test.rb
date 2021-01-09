@@ -311,7 +311,7 @@ class SystemTest < ActionDispatch::IntegrationTest
 
     puts 'create new role'
     assert_difference('Role.count', 1) do
-      post roles_url, params: { role: { name: '*', user_id: User.last.id } }
+      post roles_url, params: { role: { controller_name: '*', action_name: '*', user_id: User.last.id } }
     end
     assert_redirected_to role_url(Role.last)
     follow_redirect!
@@ -406,7 +406,7 @@ class SystemTest < ActionDispatch::IntegrationTest
     puts 'create new role'
     assert_difference('Role.count', 1) do
       %w[*].each do |c|
-        post roles_url, params: { role: { name: c, user_id: User.last.id } }
+        post roles_url, params: { role: { controller_name: c, action_name: c, user_id: User.last.id } }
       end
     end
     assert_redirected_to role_url(Role.last)
@@ -417,11 +417,11 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert :success
 
     puts 'edit the role badly'
-    patch role_url(Role.last), params: { role: { name: nil } }
+    patch role_url(Role.last), params: { role: { controller_name: nil } }
     assert :success
 
     puts 'edit the role'
-    patch role_url(Role.last), params: { role: { name: 'empty' } }
+    patch role_url(Role.last), params: { role: { controller_name: 'empty' } }
     assert_redirected_to role_url(Role.last)
     follow_redirect!
 
@@ -430,7 +430,7 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert :success
 
     puts 'edit the role'
-    patch role_url(Role.last), params: { user: { name: '*' } }
+    patch role_url(Role.last), params: { user: { controller_name: '*', action_nam: '*' } }
     assert_redirected_to role_url(Role.last)
     follow_redirect!
 
@@ -506,7 +506,7 @@ class SystemTest < ActionDispatch::IntegrationTest
     puts 'create new roles'
     assert_difference('Role.count', 9) do
       %w[application carts categories login products purchases roles subcategories users].each do |c|
-        post roles_url, params: { role: { name: c, user_id: User.last.id } }
+        post roles_url, params: { role: { controller_name: c, action_name: '*', user_id: User.last.id } }
       end
     end
     assert_redirected_to role_url(Role.last)
@@ -580,7 +580,7 @@ class SystemTest < ActionDispatch::IntegrationTest
     assert_difference('Role.count', 81) do
       %w[application carts categories login products purchases roles subcategories users].each do |c|
         %w[index show new edit create update destroy hide unhide].each do |a|
-          post roles_url, params: { role: { name: "#{c}_#{a}", user_id: User.last.id } }
+          post roles_url, params: { role: { controller_name: c, action_name: a, user_id: User.last.id } }
         end
       end
     end
@@ -893,7 +893,7 @@ class SystemTest < ActionDispatch::IntegrationTest
     puts 'toggle hidden'
     puts '----------------------------------------------------------------'
 
-    2.times { 
+    2.times {
       get '/application/toggle_hidden'
       # redirect to root_path as there's no referer yet
       assert_redirected_to root_path
@@ -935,7 +935,7 @@ class SystemTest < ActionDispatch::IntegrationTest
     toggle_hidden
   end
 
-  test 'should get full test' do
+  test 'should get full test with full permissions' do
     sanity_test
 
     puts 'begin really full fully test'
@@ -945,16 +945,17 @@ class SystemTest < ActionDispatch::IntegrationTest
     create_a_new_user_with_full_permissions_and_login_as_them
 
     full_test_for_current_user
+  end
 
+  test 'should get full test with full controllers permissions' do
     create_a_new_user_with_full_controllers_permissions_and_login_as_them
 
     full_test_for_current_user
+  end
 
+  test 'should get full test with full actions permissions' do
     create_a_new_user_with_full_action_permissions_and_login_as_them 3
 
     full_test_for_current_user
-
-    create_a_new_user_with_full_action_permissions_and_login_as_them 4
-
   end
 end

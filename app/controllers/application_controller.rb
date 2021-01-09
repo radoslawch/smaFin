@@ -2,6 +2,7 @@
 
 # Controller with global application methods.
 class ApplicationController < ActionController::Base
+  include PermissionHelper
   protect_from_forgery with: :exception
 
   def index
@@ -20,36 +21,23 @@ class ApplicationController < ActionController::Base
     # if !check_permission then return end
   end
 
-  # check if cookies indicate that user is logged it
-  def check_login
-    # get the cookie value
-    user = User.where("id=#{session[:login_id]}") unless session[:login_id].nil?
-    # check if it corresponds with any user
-    if user&.first && session[:login_user] == user.first.name
-      true
-    else
-      # redirect to login path if not
-      redirect_to login_index_path, notice: "#{notice}; please log in" unless performed?
-      false
-    end
-  end
-
-  # check for user's permissions to an action
   def check_permission
     if check_login
-      # assuming roles in format "controllerName_actionName" - permission to an action
-      # or "controllerName" - permission to a controller
-      # or "*" - permission to everything
-
-      roles = Role.where(['user_id=?
-                            AND (name like ?
-                            OR name like ?
-                            OR name like "*")',
-                          session[:login_id].to_s, "#{controller_name}_#{action_name}", controller_name])
-      return true unless roles&.empty?
+      if check_permission_helper
+        return true
+      end
     end
 
     redirect_to application_no_permissions_path, notice: 'no permissions, sorry ' unless performed?
+    false
+  end
+
+  def check_login
+    if check_login_helper
+      return true
+    end
+    notice += ';' unless notice.blank?
+    redirect_to login_index_path, notice: "#{notice} please log in" unless performed?
     false
   end
 end

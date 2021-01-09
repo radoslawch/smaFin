@@ -87,6 +87,6 @@ class RolesController < ApplicationController
     params.
       # require(:role).
       fetch(:role, {})
-          .permit(:user_id, :name)
+          .permit(:user_id, :controller_name, :action_name)
   end
 end

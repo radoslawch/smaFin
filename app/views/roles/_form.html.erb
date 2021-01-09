@@ -11,8 +11,10 @@
     </div>
   <% end %>
 
-  <%= f.label :role %><br>  
-    <%= f.text_field :name %>
+  <%= f.label :controller_name %><br>  
+    <%= f.text_field :controller_name %>
+  <%= f.label :action_name %><br>  
+    <%= f.text_field :action_name %>
     
   <%= f.label :user %><br>  
   <%= f.select(:user_id, options_from_collection_for_select(@users, "id", "name")) %>

@@ -10,12 +10,14 @@
   <tbody>
     <tr>
     <td>user</td>
-    <td>role</td>
+    <td>controller_name</td>
+    <td>action_name</td>
     </tr>
     <% @roles.each do |role| %>
       <tr>
         <td><%= role.user.name %></td>
-        <td><%= role.name %></td>
+        <td><%= role.controller_name %></td>
+        <td><%= role.action_name %></td>
         <td><%= link_to 'Show', role %></td>
         <td><%= link_to 'Edit', edit_role_path(role) %></td>
         <td><%= link_to 'Destroy', role, method: :delete, data: { confirm: 'Are you sure?' } %></td>
