@@ -19,14 +19,13 @@
 
 
   <p>
-    <%= f.label :cart_name %><br>
+    <%= f.label :cart_name %>
     <%= f.text_field :name %>
   </p>
-    <p>
-    <%= f.label :creation_date %><br>
+  <p>
+    <%= f.label :creation_date %>
     <%= f.date_field :creation_date, value: @cart.creation_date.strftime("%Y-%m-%d") || Date.today %>
   </p>
-
 
   <p>
     <%= f.submit :add %>

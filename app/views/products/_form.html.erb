@@ -23,16 +23,13 @@
     <%= f.label :podkategoria %><br>
     <!-- if we have a product (so it has subcategory) -->
     <% if @product.subcategory != nil %>
-    <%= select_tag(:category_id, options_from_collection_for_select(@categories, "id", "name", @product.subcategory.category_id), onchange: "refresh_subcategories();") %>
-    <%= f.select(:subcategory_id, options_from_collection_for_select_with_data(@subcategories, "id", "name",  @product.subcategory_id, {"category_id" => :category_id})) %>
-    <!-- if it"s a new product -->
+      <%= select_tag(:category_id, options_from_collection_for_select(@categories, "id", "name", @product.subcategory.category_id), onchange: "refresh_subcategories();") %>
+      <%= f.select(:subcategory_id, options_from_collection_for_select_with_data(@subcategories, "id", "name",  @product.subcategory_id, {"category_id" => :category_id})) %>
+    <!-- if it's a new product -->
     <% else %>
-    <%= select_tag(:category_id, options_from_collection_for_select(@categories, "id", "name"), onchange: "refresh_subcategories();") %>
-    <%= f.select(:subcategory_id, options_from_collection_for_select_with_data(@subcategories, "id", "name", nil, {"category_id" => :category_id})) %>
+      <%= select_tag(:category_id, options_from_collection_for_select(@categories, "id", "name"), onchange: "refresh_subcategories();") %>
+      <%= f.select(:subcategory_id, options_from_collection_for_select_with_data(@subcategories, "id", "name", nil, {"category_id" => :category_id})) %>
     <% end %>
-
-
-  <%#= f.select(:subcategory_id, options_from_collection_for_select(@subcategories, "id", "name", @spending.subcategory_id)) %>
   </p>
 
 

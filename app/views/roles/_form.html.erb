@@ -11,14 +11,21 @@
     </div>
   <% end %>
 
-  <%= f.label :controller_name %><br>  
+  <p>
+    <%= f.label :controller_name %>
     <%= f.text_field :controller_name %>
-  <%= f.label :action_name %><br>  
+  </p>
+
+  <p>
+    <%= f.label :action_name %>
     <%= f.text_field :action_name %>
+  </p>
     
-  <%= f.label :user %><br>  
-  <%= f.select(:user_id, options_from_collection_for_select(@users, "id", "name")) %>
-  
+  <p>
+    <%= f.label :user %>
+    <%= f.select(:user_id, options_from_collection_for_select(@users, "id", "name")) %>
+  </p>
+
   <div class="actions">
     <%= f.submit %>
   </div>

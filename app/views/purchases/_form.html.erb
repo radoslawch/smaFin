@@ -20,7 +20,7 @@
   <% if @cart.nil? %>
     <!-- add product to chosen cart -->
     <p>
-      <%= f.label :cart %><br>
+      <%= f.label :cart %>
       <%= f.select(:cart_id, options_from_collection_for_select(@carts, "id", "name",  @purchase.cart_id)) %>
     </p>
   <% else %>

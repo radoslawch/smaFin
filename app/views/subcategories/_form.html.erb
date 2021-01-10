@@ -18,13 +18,12 @@
   
 
   <p>
-    <%= f.label :subcategory_name %><br>
+    <%= f.label :subcategory_name %>
     <%= f.text_field :name %>
   </p>
 
   <p>
-    <%= f.label :category_name %><br>
-    <!-- <%= f.text_field :category_id %> -->
+    <%= f.label :category_name %>
     <%= f.select(:category_id, options_from_collection_for_select(@categories, 'id', 'name', @subcategory.category_id ? @subcategory.category_id : "")) %>
   </p>
 
